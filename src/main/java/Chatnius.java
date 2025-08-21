@@ -1,6 +1,10 @@
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class Chatnius {
+
+    private static ArrayList<String> ls = new ArrayList<>();
+    private static int id = 1;
 
     public static String intro() {
         return "____________________________________________________________\n"
@@ -15,10 +19,34 @@ public class Chatnius {
                 "____________________________________________________________\n";
     }
 
+    public static String readBook() {
+        ls.add("read book");
+        return "____________________________________________________________\n" +
+                " added: read book\n" +
+                "____________________________________________________________\n";
+    }
+
+    public static String returnBook() {
+        ls.add("return book");
+        return "____________________________________________________________\n" +
+                " added: return book\n" +
+                "____________________________________________________________\n";
+    }
+
     public static String list() {
-        return "    ____________________________________________________________\n" +
-                "     list\n" +
-                "    ____________________________________________________________\n";
+        StringBuilder result = new StringBuilder();
+        result.append("    ____________________________________________________________\n");
+
+        if (ls.isEmpty()) {
+            result.append("     No items in the list\n");
+        } else {
+            for (int i = 0; i < ls.size(); i++) {
+                result.append("     ").append(i + 1).append(". ").append(ls.get(i)).append("\n");
+            }
+        }
+
+        result.append("    ____________________________________________________________\n");
+        return result.toString();
     }
 
     public static String blah() {
@@ -45,6 +73,14 @@ public class Chatnius {
 
                 case "blah":
                     System.out.print(blah());
+                    break;
+
+                case "read book":
+                    System.out.print(readBook());
+                    break;
+
+                case "return book":
+                    System.out.print(returnBook());
                     break;
 
                 case "bye":
