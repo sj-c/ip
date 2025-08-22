@@ -77,9 +77,20 @@ public class Chatnius {
                 } else {
                     System.out.println("Invalid event format! Use: event <task> /from <start> /to <end>");
                 }
-            } else {
-                Task tsk = new ToDo(input);
-                System.out.print(tsk.returnTask());
+            } else if (input.startsWith("todo ")) {
+                if (Task.getLsSize() == 0) {
+                    System.out.println("YOO sorry but a descr of todo cant be empty man");
+                } else {
+                    Task tsk = new ToDo(input);
+                    System.out.print(tsk.returnTask());
+                }
+            }
+            else {
+                System.out.println(
+                        "____________________________________________________________\n" +
+                        " Byebye! Use me again PLEASE\n" +
+                        "____________________________________________________________\n"
+                );
             }
 
             if (running && !input.equalsIgnoreCase("bye")) {
