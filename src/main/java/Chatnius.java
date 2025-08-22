@@ -78,18 +78,31 @@ public class Chatnius {
                     System.out.println("Invalid event format! Use: event <task> /from <start> /to <end>");
                 }
             } else if (input.startsWith("todo ")) {
-                if (Task.getLsSize() == 0) {
-                    System.out.println("YOO sorry but a descr of todo cant be empty man");
+                String content = input.substring(5).trim(); // FIXED: substring(5) not substring(6)
+                if (content.isEmpty()) {
+                    System.out.println("Todo description cannot be empty!");
                 } else {
-                    Task tsk = new ToDo(input);
-                    System.out.print(tsk.returnTask());
+                    Task tsk = new ToDo(content);
+                    System.out.print(tsk.outputInsert()); // FIXED: Use outputInsert() instead of returnTask()
                 }
-            }
-            else {
+            } else if (input.startsWith("delete ")) {
+                try {
+                    int num = Integer.parseInt(input.substring(7).trim()) - 1; // FIXED: substring(7) not substring(5)
+                    if (Task.getLsSize() == 0) {
+                        System.out.println("List is already empty");
+                    } else if (num >= 0 && num < Task.getLsSize()) {
+                        System.out.print(Task.delete(num));
+                    } else {
+                        System.out.println("Invalid task number!");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Please provide a valid number after 'delete'");
+                }
+            } else {
                 System.out.println(
                         "____________________________________________________________\n" +
-                        " Byebye! Use me again PLEASE\n" +
-                        "____________________________________________________________\n"
+                                " idk about this function \n" +
+                                "____________________________________________________________\n"
                 );
             }
 

@@ -72,4 +72,13 @@ abstract class Task {
     public static int getLsSize() {
         return ls.size();
     }
+
+    public static String delete(int num) {
+        Task removedTask = ls.remove(num);
+        return "____________________________________________________________\n" +
+                "     Noted. I've removed this task:\n" +
+                "       " + removedTask.toString() + "\n" +
+                "     Now you have " + ls.size() + " tasks in the list.\n" +
+                "____________________________________________________________\n";
+    }
 }
