@@ -1,10 +1,6 @@
 import java.util.Scanner;
-import java.util.ArrayList;
 
 public class Chatnius {
-
-    private static ArrayList<Task> ls = new ArrayList<>();
-
     public static String intro() {
         return "____________________________________________________________\n"
                 + " Hello! I'm Chatnius\n"
@@ -18,25 +14,8 @@ public class Chatnius {
                 "____________________________________________________________\n";
     }
 
-    public static String list() {
-        StringBuilder result = new StringBuilder();
-        result.append("    ____________________________________________________________\n");
-
-        if (ls.isEmpty()) {
-            result.append("     No items in the list\n");
-        } else {
-            for (int i = 0; i < ls.size(); i++) {
-                result.append("     ").append(i + 1).append(". ").append(ls.get(i).toString()).append("\n");
-            }
-        }
-
-        result.append("    ____________________________________________________________\n");
-        return result.toString();
-    }
-
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-
         System.out.print(intro());
 
         boolean running = true;
@@ -47,19 +26,15 @@ public class Chatnius {
             String lowerInput = input.toLowerCase();
 
             if (lowerInput.equals("list")) {
-                System.out.print(list());
+                System.out.print(Task.list());
             } else if (lowerInput.equals("bye")) {
                 System.out.print(quit());
                 running = false;
             } else if (input.startsWith("mark ")) {
                 try {
                     int num = Integer.parseInt(input.substring(5).trim()) - 1;
-                    if (num >= 0 && num < ls.size()) {
-                        ls.get(num).setDone(true);
-                        System.out.println("____________________________________________________________");
-                        System.out.println("     Nice! I've marked this task as done:");
-                        System.out.println("     " + (num + 1) + ". " + ls.get(num).toString());
-                        System.out.println("____________________________________________________________");
+                    if (num >= 0 && num < Task.getLsSize()) {
+                        System.out.print(Task.isDone(num));
                     } else {
                         System.out.println("Invalid task number!");
                     }
@@ -69,21 +44,41 @@ public class Chatnius {
             } else if (input.startsWith("unmark ")) {
                 try {
                     int num = Integer.parseInt(input.substring(7).trim()) - 1;
-                    if (num >= 0 && num < ls.size()) {
-                        ls.get(num).setDone(false);
-                        System.out.println("____________________________________________________________");
-                        System.out.println("     OK, I've marked this task as not done yet:");
-                        System.out.println("     " + (num + 1) + ". " + ls.get(num).toString());
-                        System.out.println("____________________________________________________________");
+                    if (num >= 0 && num < Task.getLsSize()) {
+                        System.out.print(Task.unDone(num));
                     } else {
                         System.out.println("Invalid task number!");
                     }
                 } catch (NumberFormatException e) {
                     System.out.println("Please provide a valid number after 'unmark'");
                 }
+            } else if (input.startsWith("deadline ")) {
+                String content = input.substring(9).trim();
+                String[] parts = content.split(" /by ");
+
+                if (parts.length == 2) {
+                    String name = parts[0].trim();
+                    String by = parts[1].trim();
+                    Task tsk = new Deadline(name, by);
+                    System.out.print(tsk.outputInsert());
+                } else {
+                    System.out.println("Invalid deadline format! Use: deadline <task> /by <time>");
+                }
+            } else if (input.startsWith("event ")) {
+                String content = input.substring(6).trim();
+                String[] parts = content.split(" /from | /to ");
+
+                if (parts.length == 3) {
+                    String name = parts[0].trim();
+                    String from = parts[1].trim();
+                    String to = parts[2].trim();
+                    Task tsk = new Event(name, from, to);
+                    System.out.print(tsk.outputInsert());
+                } else {
+                    System.out.println("Invalid event format! Use: event <task> /from <start> /to <end>");
+                }
             } else {
-                Task tsk = new Task(input);
-                ls.add(tsk);
+                Task tsk = new ToDo(input);
                 System.out.print(tsk.returnTask());
             }
 
@@ -91,7 +86,6 @@ public class Chatnius {
                 System.out.print("What you need more for bro? ");
             }
         }
-
         scanner.close();
     }
 }
