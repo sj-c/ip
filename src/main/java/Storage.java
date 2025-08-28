@@ -1,53 +1,73 @@
+// Storage.java
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
+import java.util.ArrayList;
 import java.util.List;
 
-final class Storage {
-    private static final Path FILE = Paths.get("data", "duke.txt");
+public final class Storage {
+    private final Path file;
 
-    static void initAndLoad() {
+    public Storage(String filePath) {
+        this.file = Paths.get(filePath);
+    }
+
+    /** Create folder/file if missing, then load tasks. */
+    public List<Task> load() throws DukeException {
         try {
-            if (Files.notExists(FILE.getParent())) {
-                Files.createDirectories(FILE.getParent());
+            Path parent = file.getParent();
+            if (parent != null && Files.notExists(parent)) {
+                Files.createDirectories(parent);
             }
-            if (Files.notExists(FILE)) {
-                Files.createFile(FILE);
+            if (Files.notExists(file)) {
+                Files.createFile(file);
+                return new ArrayList<>();
             }
-            List<String> lines = Files.readAllLines(FILE, StandardCharsets.UTF_8);
-            for (String line : lines) {
-                String trimmed = line.trim();
-                if (trimmed.isEmpty()) continue;
+
+            List<String> lines = Files.readAllLines(file, StandardCharsets.UTF_8);
+            List<Task> tasks = new ArrayList<>();
+            for (String raw : lines) {
+                String line = raw.trim();
+                if (line.isEmpty()) continue;
                 try {
-                    parseAndAdd(trimmed);
+                    tasks.add(parseLine(line));
                 } catch (IllegalArgumentException ex) {
-                    System.out.println("Skipping corrupted line: " + trimmed);
+                    // Stretch goal handling: skip corrupted lines
+                    // You could also collect and report them via Ui.
                 }
             }
+            return tasks;
         } catch (IOException e) {
-            System.out.println("Failed to initialize storage: " + e.getMessage());
+            throw new DukeException("Failed to load tasks from " + file, e);
         }
     }
 
-    static void saveAll() {
+    /** Save whole list snapshot to disk (simple & robust). */
+    public void save(TaskList tasks) throws DukeException {
+        // (Optional) atomic save via temp file:
+        Path tmp = file.resolveSibling(file.getFileName().toString() + ".tmp");
         try (BufferedWriter w = Files.newBufferedWriter(
-                FILE, StandardCharsets.UTF_8,
-                StandardOpenOption.TRUNCATE_EXISTING)) {
-            for (Task t : Task.all()) {
-                w.write(t.toSaveString());
+                tmp, StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+
+            for (int i = 0; i < tasks.size(); i++) {
+                w.write(tasks.get(i).toSaveString());
                 w.newLine();
             }
         } catch (IOException e) {
-            System.out.println("Failed to save tasks: " + e.getMessage());
+            throw new DukeException("Failed to write temp file for " + file, e);
+        }
+
+        try {
+            Files.move(tmp, file, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new DukeException("Failed to replace " + file + " with temp file", e);
         }
     }
 
-    private static void parseAndAdd(String line) {
-        // Format: TYPE|done|name|extras...
+    // Format: TYPE|done|name|extras...
+    private Task parseLine(String line) {
         String[] parts = line.split("\\|", -1);
         if (parts.length < 3) throw new IllegalArgumentException("Bad format: " + line);
 
@@ -62,6 +82,7 @@ final class Storage {
                 break;
             case "D":
                 if (parts.length < 4) throw new IllegalArgumentException("Deadline missing /by");
+                // Deadline will parse ISO or flexible formats itself
                 t = new Deadline(name, parts[3].trim());
                 break;
             case "E":
@@ -73,5 +94,6 @@ final class Storage {
         }
 
         t.done = done;
+        return t;
     }
 }
