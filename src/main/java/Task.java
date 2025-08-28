@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 
 abstract class Task {
     protected boolean done;
@@ -11,13 +12,25 @@ abstract class Task {
         ls.add(this);
     }
 
+    // === NEW: stable save format ===
+    protected abstract String typeCode();                 // "T" / "D" / "E"
+    protected String[] extraFieldsForSave() { return new String[0]; }
+
+    public String toSaveString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(typeCode()).append("|").append(done ? 1 : 0).append("|").append(name);
+        for (String f : extraFieldsForSave()) {
+            sb.append("|").append(f);
+        }
+        return sb.toString();
+    }
+
+    // === NEW: safe read access for saving ===
+    public static List<Task> all() { return new ArrayList<>(ls); }
+
     @Override
     public String toString() {
-        if (this.done) {
-            return "[X] " + name;
-        } else {
-            return "[ ] " + name;
-        }
+        return (this.done ? "[X] " : "[ ] ") + name;
     }
 
     public String returnTask() {
