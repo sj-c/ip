@@ -20,18 +20,22 @@ public class Ui {
         return scanner.nextLine();
     }
 
-    public void showLine() { System.out.println("____________________________________________________________"); }
+    public void showLine() {
+        System.out.println("____________________________________________________________"); }
 
     public void show(String msg) {
+
         System.out.println(msg);
     }
 
 
     public void showError(String msg) {
+
         System.out.println(msg);
     }
 
     public void close() {
+
         scanner.close();
     }
 

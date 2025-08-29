@@ -3,6 +3,7 @@ package seedu.duke.task;
 public class ToDo extends Task {
 
     public ToDo(String name) {
+
         super(name);
     }
 
@@ -13,6 +14,7 @@ public class ToDo extends Task {
      */
     @Override
     protected String typeCode() {
+
         return "T";
     }
 
@@ -23,6 +25,7 @@ public class ToDo extends Task {
      */
     @Override
     public String toString() {
+
         return "[T]" + super.toString();
     }
 }

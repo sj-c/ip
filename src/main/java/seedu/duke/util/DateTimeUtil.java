@@ -30,10 +30,18 @@ public final class DateTimeUtil {
         }
         // Then date-only -> default time = 00:00
         for (DateTimeFormatter f : DATE_PATTERNS) {
-            try { return LocalDate.parse(t, f).atStartOfDay(); } catch (DateTimeParseException ignored) {}
+            try {
+                return LocalDate.parse(t, f).atStartOfDay();
+            } catch (DateTimeParseException ignored) {
+
+            }
         }
         // Finally, accept ISO if we read back from storage
-        try { return LocalDateTime.parse(t, ISO); } catch (DateTimeParseException ignored) {}
+        try {
+            return LocalDateTime.parse(t, ISO);
+        } catch (DateTimeParseException ignored) {
+
+        }
 
         throw new IllegalArgumentException("Unrecognized date/time: " + s);
     }
