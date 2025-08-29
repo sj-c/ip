@@ -3,6 +3,7 @@ package seedu.duke.task;
 import java.util.ArrayList;
 import java.util.List;
 import seedu.duke.exception.InvalidTaskIndexException;
+import java.util.stream.Collectors;
 
 public class TaskList {
     private final List<Task> ls = new ArrayList<>();
@@ -106,4 +107,18 @@ public class TaskList {
                 + "     Now you have " + ls.size() + " tasks in the list.\n"
                 + "____________________________________________________________\n";
     }
+
+    /**
+     * Returns tasks whose names contain the given keyword (case-insensitive).
+     *
+     * @param keyword Keyword to search for.
+     * @return Matching tasks in their existing order.
+     */
+    public List<Task> findByKeyword(String keyword) {
+        final String needle = keyword.toLowerCase();
+        return ls.stream()
+                .filter(t -> t.getName().toLowerCase().contains(needle))
+                .collect(Collectors.toList());
+    }
+
 }

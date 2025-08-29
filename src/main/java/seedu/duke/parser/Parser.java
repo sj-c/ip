@@ -72,6 +72,15 @@ public final class Parser {
             if (args.isEmpty()) throw new DukeException("Please provide a valid number after 'delete'");
             return new DeleteCommand(parseIndex(args, "delete"));
 
+        case "find": {
+            String keyword = args.trim();
+            if (keyword.isEmpty()) {
+                throw new DukeException("Keyword cannot be empty. Usage: find <keyword>");
+            }
+            return new FindCommand(keyword);
+        }
+
+
         default:
             throw new DukeException(" idk about this function ");
         }
