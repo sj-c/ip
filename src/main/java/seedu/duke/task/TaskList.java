@@ -66,7 +66,6 @@ public class TaskList {
      */
     public String renderList() {
         StringBuilder result = new StringBuilder();
-        result.append("____________________________________________________________\n");
         if (ls.isEmpty()) {
             result.append("     No items in the list\n");
         } else {
@@ -75,7 +74,6 @@ public class TaskList {
             }
             result.append(String.format("     Now you have %d tasks in the list.\n", ls.size()));
         }
-        result.append("____________________________________________________________\n");
         return result.toString();
     }
 
@@ -85,11 +83,9 @@ public class TaskList {
      * @return the message for the task.
      */
     public String addedMessage(Task t) {
-        return "____________________________________________________________\n"
-                + "Got it. I've added this task:\n"
+        return  "Got it. I've added this task:\n"
                 + t.toString() + "\n"
-                + String.format("Now you have %d tasks in the list.\n", ls.size())
-                + "____________________________________________________________\n";
+                + String.format("Now you have %d tasks in the list.\n", ls.size());
     }
 
     /**
@@ -101,11 +97,9 @@ public class TaskList {
         int i = oneBasedIndex - 1;
         if (i < 0 || i >= ls.size()) throw new InvalidTaskIndexException(oneBasedIndex);
         Task removed = ls.remove(i);
-        return "____________________________________________________________\n"
-                + "     Noted. I've removed this task:\n"
+        return "     Noted. I've removed this task:\n"
                 + "       " + removed.toString() + "\n"
-                + "     Now you have " + ls.size() + " tasks in the list.\n"
-                + "____________________________________________________________\n";
+                + "     Now you have " + ls.size() + " tasks in the list.\n";
     }
 
     /**

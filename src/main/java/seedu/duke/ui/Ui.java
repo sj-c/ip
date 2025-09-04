@@ -5,38 +5,49 @@ import java.util.Scanner;
 public class Ui {
     private final Scanner scanner = new Scanner(System.in);
 
+    // buffer to collect messages for GUI
+    private final StringBuilder buffer = new StringBuilder();
+
+    private void addToBuffer(String msg) {
+        buffer.append(msg).append(System.lineSeparator());
+    }
+
+    /** Get all accumulated output and clear the buffer */
+    public String flush() {
+        String out = buffer.toString();
+        buffer.setLength(0); // clear
+        return out;
+    }
+
     public void showWelcome() {
-        /* print intro */
-        System.out.println(" Hello! I'm Chatnius\n"
-                + "____________________________________________________________\n");
+        String msg = " Hello! I'm Chatnius\n";
+        System.out.println(msg);
+        addToBuffer(msg);
     }
+
     public void showGoodbye() {
-        /* print quit */
-        System.out.println(" Byebye! Use me again PLEASE\n" +
-                "____________________________________________________________\n");
+        String msg = " Byebye! Use me again PLEASE\n";
+        System.out.println(msg);
+        addToBuffer(msg);
     }
+
     public String readCommand() {
         System.out.print("What you need me for? ");
         return scanner.nextLine();
     }
 
-    public void showLine() {
-        System.out.println("____________________________________________________________"); }
 
     public void show(String msg) {
-
         System.out.println(msg);
+        addToBuffer(msg);
     }
 
-
     public void showError(String msg) {
-
         System.out.println(msg);
+        addToBuffer(msg);
     }
 
     public void close() {
-
         scanner.close();
     }
-
 }
