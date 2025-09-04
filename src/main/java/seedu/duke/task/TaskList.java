@@ -14,7 +14,12 @@ public class TaskList {
     }
 
     // basic ops
-    public void add(Task t) { ls.add(t); }
+    public void add(Task... tasks) {
+        for (Task t : tasks) {
+            ls.add(t);
+        }
+    }
+
 
     public Task get(int idx) {
         return ls.get(idx);
