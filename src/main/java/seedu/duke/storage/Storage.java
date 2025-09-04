@@ -1,28 +1,45 @@
-// Storage.java
-
 package seedu.duke.storage;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
-import seedu.duke.task.*;
 import seedu.duke.exception.DukeException;
+import seedu.duke.task.Deadline;
+import seedu.duke.task.Event;
+import seedu.duke.task.Task;
+import seedu.duke.task.TaskList;
+import seedu.duke.task.ToDo;
 
-
+/**
+ * Handles persistence of tasks to and from disk.
+ */
 public final class Storage {
+
     private final Path file;
 
+    /**
+     * Creates a {@code Storage} pointing to a file path.
+     *
+     * @param filePath path to the tasks file
+     */
     public Storage(String filePath) {
         this.file = Paths.get(filePath);
     }
 
-    /** Create folder/file if missing, then load tasks. */
+    /**
+     * Loads tasks from disk. Creates parent directory/file if missing.
+     *
+     * @return list of tasks loaded from the file
+     * @throws DukeException if an I/O error occurs
+     */
     public List<Task> load() throws DukeException {
         try {
             Path parent = file.getParent();
@@ -38,12 +55,14 @@ public final class Storage {
             List<Task> tasks = new ArrayList<>();
             for (String raw : lines) {
                 String line = raw.trim();
-                if (line.isEmpty()) continue;
+                if (line.isEmpty()) {
+                    continue;
+                }
                 try {
                     tasks.add(parseLine(line));
                 } catch (IllegalArgumentException ex) {
-                    // Stretch goal handling: skip corrupted lines
-                    // You could also collect and report them via Ui.
+                    // Not fatal: skip corrupted lines but do not keep the catch block empty.
+                    System.err.println("Skipping malformed line in " + file + ": " + line);
                 }
             }
             return tasks;
@@ -52,9 +71,13 @@ public final class Storage {
         }
     }
 
-    /** Save whole list snapshot to disk (simple & robust). */
+    /**
+     * Saves the entire task list atomically to disk.
+     *
+     * @param tasks in-memory task list
+     * @throws DukeException if any I/O error occurs
+     */
     public void save(TaskList tasks) throws DukeException {
-        // (Optional) atomic save via temp file:
         Path tmp = file.resolveSibling(file.getFileName().toString() + ".tmp");
         try (BufferedWriter w = Files.newBufferedWriter(
                 tmp, StandardCharsets.UTF_8,
@@ -75,31 +98,43 @@ public final class Storage {
         }
     }
 
-    // Format: TYPE|done|name|extras...
+    /**
+     * Parses one serialized task line.
+     * <p>Format: {@code TYPE|done|name|extras...}</p>
+     *
+     * @param line serialized line
+     * @return the parsed {@link Task}
+     * @throws IllegalArgumentException if the line is malformed
+     */
     private Task parseLine(String line) {
         String[] parts = line.split("\\|", -1);
-        if (parts.length < 3) throw new IllegalArgumentException("Bad format: " + line);
+        if (parts.length < 3) {
+            throw new IllegalArgumentException("Bad format: " + line);
+        }
 
         String type = parts[0].trim();
-        boolean done = parts[1].trim().equals("1");
+        boolean done = "1".equals(parts[1].trim());
         String name = parts[2].trim();
 
         Task t;
         switch (type) {
-            case "T":
-                t = new ToDo(name);
-                break;
-            case "D":
-                if (parts.length < 4) throw new IllegalArgumentException("Deadline missing /by");
-                // Deadline will parse ISO or flexible formats itself
-                t = new Deadline(name, parts[3].trim());
-                break;
-            case "E":
-                if (parts.length < 5) throw new IllegalArgumentException("Event missing /from or /to");
-                t = new Event(name, parts[3].trim(), parts[4].trim());
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown type: " + type);
+        case "T":
+            t = new ToDo(name);
+            break;
+        case "D":
+            if (parts.length < 4) {
+                throw new IllegalArgumentException("Deadline missing /by");
+            }
+            t = new Deadline(name, parts[3].trim());
+            break;
+        case "E":
+            if (parts.length < 5) {
+                throw new IllegalArgumentException("Event missing /from or /to");
+            }
+            t = new Event(name, parts[3].trim(), parts[4].trim());
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown type: " + type);
         }
 
         t.setDone(done);

@@ -1,38 +1,96 @@
 package seedu.duke.task;
 
+/**
+ * Base class for all tasks.
+ */
 public abstract class Task {
+
     protected boolean done;
     protected String name;
 
+    /**
+     * Creates a {@code Task}.
+     *
+     * @param name task description
+     */
     public Task(String name) {
         this.name = name;
         this.done = false;
     }
 
     // --- getters/setters ---
-    public boolean isDone() { return done; }
-    public void setDone(boolean v) { this.done = v; }
-    public String getName() { return name; }
+
+    /**
+     * Returns whether the task is completed.
+     *
+     * @return true if done; false otherwise
+     */
+    public boolean isDone() {
+        return done;
+    }
+
+    /**
+     * Sets the done status.
+     *
+     * @param v done state to set
+     */
+    public void setDone(boolean v) {
+        this.done = v;
+    }
+
+    /**
+     * Returns the task name/description.
+     *
+     * @return name
+     */
+    public String getName() {
+        return name;
+    }
 
     // --- stable save format ---
-    protected abstract String typeCode();             // "T" / "D" / "E"
-    protected String[] extraFieldsForSave() { return new String[0]; }
 
+    /**
+     * Type discriminator used in save files ("T" / "D" / "E").
+     *
+     * @return the type code
+     */
+    protected abstract String typeCode();
+
+    /**
+     * Extra fields appended to the save line after the name.
+     *
+     * @return array of extra fields (may be empty)
+     */
+    protected String[] extraFieldsForSave() {
+        return new String[0];
+    }
+
+    /**
+     * Returns a stable single-line representation suitable for persistence.
+     *
+     * @return save line
+     */
     public String toSaveString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(typeCode()).append("|").append(done ? 1 : 0).append("|").append(name);
-        for (String f : extraFieldsForSave()) sb.append("|").append(f);
+        sb.append(typeCode())
+                .append("|")
+                .append(done ? 1 : 0)
+                .append("|")
+                .append(name);
+
+        for (String f : extraFieldsForSave()) {
+            sb.append("|").append(f);
+        }
         return sb.toString();
     }
 
     /**
-     * Prints Task's details.
+     * Returns a user-friendly representation for display.
      *
-     * @return the details of Task
+     * @return formatted string
      */
     @Override
     public String toString() {
         return (done ? "[X] " : "[ ] ") + name;
     }
-
 }

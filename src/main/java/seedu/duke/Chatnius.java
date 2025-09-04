@@ -1,18 +1,17 @@
 package seedu.duke;
 
-import seedu.duke.ui.Ui;
-import seedu.duke.storage.Storage;
-import seedu.duke.task.TaskList;
-import seedu.duke.parser.Parser;
 import seedu.duke.command.Command;
 import seedu.duke.exception.DukeException;
+import seedu.duke.parser.Parser;
+import seedu.duke.storage.Storage;
+import seedu.duke.task.TaskList;
+import seedu.duke.ui.Ui;
 
 /**
  * Main logic class for the Chatnius application.
- * <p>
- * Handles initialization of storage, task list, and UI components.
+ * <p>Handles initialization of storage, task list, and UI components.
  * Provides both a CLI loop (via {@link #run()}) and a method for GUI interaction
- * (via {@link #getResponse(String)}).
+ * (via {@link #getResponse(String)}).</p>
  */
 public class Chatnius {
 
@@ -75,8 +74,7 @@ public class Chatnius {
     }
 
     /**
-     * Handles one command and returns the response as a string.
-     * This method is used by the GUI.
+     * Handles one command and returns the response as a string (used by the GUI).
      *
      * @param input the raw user input string
      * @return the output string produced by executing the command

@@ -2,72 +2,122 @@ package seedu.duke.task;
 
 import java.util.ArrayList;
 import java.util.List;
-import seedu.duke.exception.InvalidTaskIndexException;
 import java.util.stream.Collectors;
 
+import seedu.duke.exception.InvalidTaskIndexException;
+
+/**
+ * A mutable list of {@link Task} with helper operations for commands.
+ */
 public class TaskList {
+
     private final List<Task> ls = new ArrayList<>();
 
-    public TaskList() {}
-    public TaskList(List<Task> initial) {
-        if (initial != null) ls.addAll(initial);
+    /** Creates an empty task list. */
+    public TaskList() {
+        // no-op
     }
 
-    // basic ops
+    /**
+     * Creates a task list initialised from an existing list.
+     *
+     * @param initial tasks to add (may be {@code null})
+     */
+    public TaskList(List<Task> initial) {
+        if (initial != null) {
+            ls.addAll(initial);
+        }
+    }
+
+    /**
+     * Adds one or more tasks to the end of the list (varargs supported).
+     *
+     * @param tasks tasks to add
+     */
     public void add(Task... tasks) {
         for (Task t : tasks) {
             ls.add(t);
         }
     }
 
-
+    /**
+     * Returns the task at the given 0-based index.
+     *
+     * @param idx index (0-based)
+     * @return task at index
+     */
     public Task get(int idx) {
         return ls.get(idx);
     }
+
+    /**
+     * Deletes and returns the task at the given 0-based index.
+     *
+     * @param idx index (0-based)
+     * @return removed task
+     */
     public Task deleteAt(int idx) {
         return ls.remove(idx);
     }
 
+    /**
+     * Returns the number of tasks.
+     *
+     * @return size of list
+     */
     public int size() {
         return ls.size();
     }
 
-    public boolean isEmpty() { return ls.isEmpty(); }
+    /**
+     * Returns whether the list is empty.
+     *
+     * @return true if empty; false otherwise
+     */
+    public boolean isEmpty() {
+        return ls.isEmpty();
+    }
 
     // 1-based index helpers for commands
+
     /**
-     * Marks the Task as Done
+     * Marks the task at the given 1-based index as done.
      *
-     * @param oneBasedIndex the index of the task
-     * @return the marked task.
+     * @param oneBasedIndex 1-based index
+     * @return the marked task
+     * @throws InvalidTaskIndexException if index is out of range
      */
     public Task mark(int oneBasedIndex) throws InvalidTaskIndexException {
         int i = oneBasedIndex - 1;
-        if (i < 0 || i >= ls.size()) throw new InvalidTaskIndexException(oneBasedIndex);
+        if (i < 0 || i >= ls.size()) {
+            throw new InvalidTaskIndexException(oneBasedIndex);
+        }
         Task t = ls.get(i);
         t.setDone(true);
         return t;
     }
 
     /**
-     * Unmark the Task as Done
+     * Marks the task at the given 1-based index as not done.
      *
-     * @param oneBasedIndex the index of the task
-     * @throws InvalidTaskIndexException when the index of the task is invalid
-     * @return the marked task.
+     * @param oneBasedIndex 1-based index
+     * @return the unmarked task
+     * @throws InvalidTaskIndexException if index is out of range
      */
     public Task unmark(int oneBasedIndex) throws InvalidTaskIndexException {
         int i = oneBasedIndex - 1;
-        if (i < 0 || i >= ls.size()) throw new InvalidTaskIndexException(oneBasedIndex);
+        if (i < 0 || i >= ls.size()) {
+            throw new InvalidTaskIndexException(oneBasedIndex);
+        }
         Task t = ls.get(i);
         t.setDone(false);
         return t;
     }
 
     /**
-     * Formats the list of task
+     * Renders the entire list as a user-friendly multi-line string.
      *
-     * @return the formatted task list.
+     * @return formatted task list
      */
     public String renderList() {
         StringBuilder result = new StringBuilder();
@@ -75,7 +125,11 @@ public class TaskList {
             result.append("     No items in the list\n");
         } else {
             for (int i = 0; i < ls.size(); i++) {
-                result.append("     ").append(i + 1).append(". ").append(ls.get(i).toString()).append("\n");
+                result.append("     ")
+                        .append(i + 1)
+                        .append(". ")
+                        .append(ls.get(i).toString())
+                        .append("\n");
             }
             result.append(String.format("     Now you have %d tasks in the list.\n", ls.size()));
         }
@@ -83,24 +137,29 @@ public class TaskList {
     }
 
     /**
-     * Creates a message for the added task
+     * Returns the message shown after adding a task.
      *
-     * @return the message for the task.
+     * @param t the task that was added
+     * @return user-facing message
      */
     public String addedMessage(Task t) {
-        return  "Got it. I've added this task:\n"
+        return "Got it. I've added this task:\n"
                 + t.toString() + "\n"
                 + String.format("Now you have %d tasks in the list.\n", ls.size());
     }
 
     /**
-     * Creates a message for the deleted task
+     * Deletes a task at 1-based index and returns the message shown.
      *
-     * @return the message for the task.
+     * @param oneBasedIndex 1-based index of the task to delete
+     * @return user-facing message describing the deletion
+     * @throws InvalidTaskIndexException if index is out of range
      */
     public String deleteMessage(int oneBasedIndex) throws InvalidTaskIndexException {
         int i = oneBasedIndex - 1;
-        if (i < 0 || i >= ls.size()) throw new InvalidTaskIndexException(oneBasedIndex);
+        if (i < 0 || i >= ls.size()) {
+            throw new InvalidTaskIndexException(oneBasedIndex);
+        }
         Task removed = ls.remove(i);
         return "     Noted. I've removed this task:\n"
                 + "       " + removed.toString() + "\n"
@@ -110,8 +169,8 @@ public class TaskList {
     /**
      * Returns tasks whose names contain the given keyword (case-insensitive).
      *
-     * @param keyword Keyword to search for.
-     * @return Matching tasks in their existing order.
+     * @param keyword keyword to search for
+     * @return matching tasks in their existing order
      */
     public List<Task> findByKeyword(String keyword) {
         final String needle = keyword.toLowerCase();
@@ -119,5 +178,4 @@ public class TaskList {
                 .filter(t -> t.getName().toLowerCase().contains(needle))
                 .collect(Collectors.toList());
     }
-
 }

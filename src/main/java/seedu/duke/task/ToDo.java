@@ -1,31 +1,36 @@
 package seedu.duke.task;
 
+/**
+ * A simple to-do task without dates.
+ */
 public class ToDo extends Task {
 
+    /**
+     * Creates a {@code ToDo}.
+     *
+     * @param name description of the task
+     */
     public ToDo(String name) {
-
         super(name);
     }
 
     /**
-     * Creates the type code for deadline.
+     * Returns the save type code for todos.
      *
-     * @return the type code  If date and time is in the wrong format
+     * @return {@code "T"}
      */
     @Override
     protected String typeCode() {
-
         return "T";
     }
 
     /**
-     * Prints ToDo's details.
+     * Returns a user-friendly description of this todo.
      *
-     * @return the details of ToDo
+     * @return formatted string
      */
     @Override
     public String toString() {
-
         return "[T]" + super.toString();
     }
 }

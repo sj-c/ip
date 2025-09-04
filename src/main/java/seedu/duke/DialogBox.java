@@ -11,59 +11,84 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 
 /**
- * Represents a dialog box consisting of an ImageView to represent the speaker's face
- * and a label containing text from the speaker.
+ * A dialog row consisting of the speaker image and a text bubble.
  */
 public class DialogBox extends HBox {
-    @FXML private Label dialog;
-    @FXML private ImageView displayPicture;
 
+    @FXML
+    private Label dialog;
+
+    @FXML
+    private ImageView displayPicture;
+
+    /**
+     * Creates a dialog box using the DialogBox.fxml definition.
+     *
+     * @param text message shown in the bubble
+     * @param img  avatar image
+     */
     private DialogBox(String text, Image img) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(MainWindow.class.getResource("/view/DialogBox.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(
+                    MainWindow.class.getResource("/view/DialogBox.fxml"));
             fxmlLoader.setController(this);
             fxmlLoader.setRoot(this);
             fxmlLoader.load();
         } catch (IOException e) {
+            // In a UI control constructor, printing is acceptable for debugging in this project scope
             e.printStackTrace();
         }
+
         dialog.setText(text);
         displayPicture.setImage(img);
 
-        // === NEW: bubble readability & avatar size ===
-        setSpacing(8);                       // gap between avatar and bubble
-        dialog.setWrapText(true);            // wrap long messages
-        dialog.setMaxWidth(420);             // cap bubble width (tweak as you like)
+        // Bubble readability & avatar size
+        setSpacing(8);
+        dialog.setWrapText(true);
+        dialog.setMaxWidth(420);
 
-        displayPicture.setFitWidth(56);      // smaller, cleaner avatar
+        displayPicture.setFitWidth(56);
         displayPicture.setFitHeight(56);
         displayPicture.setPreserveRatio(true);
     }
 
-    /** image LEFT, bubble RIGHT (Duke) */
+    /** Positions image on the LEFT and bubble on the RIGHT (Duke). */
     private void layoutLeft() {
         getChildren().setAll(displayPicture, dialog);
         setAlignment(Pos.TOP_LEFT);
-        dialog.getStyleClass().add("reply-label");  // your rounded-corner style for replies
+        dialog.getStyleClass().add("reply-label");
     }
 
-    /** bubble LEFT, image RIGHT (You) */
+    /** Positions bubble on the LEFT and image on the RIGHT (User). */
     private void layoutRight() {
         getChildren().setAll(dialog, displayPicture);
         setAlignment(Pos.TOP_RIGHT);
         dialog.getStyleClass().remove("reply-label");
     }
 
+    /**
+     * Factory for the user dialog row.
+     *
+     * @param text message
+     * @param img  avatar
+     * @return the dialog box configured for a user message
+     */
     public static DialogBox getUserDialog(String text, Image img) {
-        var db = new DialogBox(text, img);
-        db.layoutRight();              // you on the RIGHT: bubble left, picture right
+        DialogBox db = new DialogBox(text, img);
+        db.layoutRight();
         return db;
     }
 
+    /**
+     * Factory for the Duke dialog row.
+     *
+     * @param text message
+     * @param img  avatar
+     * @return the dialog box configured for a Duke message
+     */
     public static DialogBox getDukeDialog(String text, Image img) {
-        var db = new DialogBox(text, img);
-        db.layoutLeft();               // duke on the LEFT: picture left, bubble right
+        DialogBox db = new DialogBox(text, img);
+        db.layoutLeft();
         return db;
     }
 }
-

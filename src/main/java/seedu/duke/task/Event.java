@@ -1,25 +1,40 @@
 package seedu.duke.task;
 
 import java.time.LocalDateTime;
+
 import seedu.duke.util.DateTimeUtil;
 
+/**
+ * An event task with a start and end date/time.
+ */
 public class Event extends Task {
+
     protected LocalDateTime from;
     protected LocalDateTime to;
 
+    /**
+     * Creates an {@code Event}.
+     *
+     * @param description description of the event
+     * @param fromRaw     start time in a parseable string
+     * @param toRaw       end time in a parseable string
+     * @throws IllegalArgumentException if date/time parsing fails
+     */
     public Event(String description, String fromRaw, String toRaw) {
         super(description);
         this.from = DateTimeUtil.parseFlexibleDateOrDateTime(fromRaw);
-        this.to   = DateTimeUtil.parseFlexibleDateOrDateTime(toRaw);
+        this.to = DateTimeUtil.parseFlexibleDateOrDateTime(toRaw);
     }
 
     /**
-     * Creates the type code for deadline.
+     * Returns the save type code for events.
      *
-     * @return the type code  If date and time is in the wrong format
+     * @return {@code "E"}
      */
     @Override
-    protected String typeCode() { return "E"; }
+    protected String typeCode() {
+        return "E";
+    }
 
     @Override
     protected String[] extraFieldsForSave() {
@@ -30,14 +45,14 @@ public class Event extends Task {
     }
 
     /**
-     * Prints Event's details.
+     * Returns a user-friendly description of this event.
      *
-     * @return the details of Event
+     * @return formatted string
      */
     @Override
     public String toString() {
         return "[E]" + super.toString()
                 + " (from: " + DateTimeUtil.formatFriendly(from)
-                + " to: "   + DateTimeUtil.formatFriendly(to) + ")";
+                + " to: " + DateTimeUtil.formatFriendly(to) + ")";
     }
 }

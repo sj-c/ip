@@ -3,9 +3,20 @@ package seedu.duke;
 import javafx.application.Application;
 
 /**
- * A launcher class to workaround classpath issues.
+ * Launches JavaFX in environments where running the {@link Main} class directly
+ * can cause classpath issues.
  */
-public class Launcher {
+public final class Launcher {
+
+    private Launcher() {
+        // utility class
+    }
+
+    /**
+     * Entry point that delegates to {@link Main}.
+     *
+     * @param args program arguments
+     */
     public static void main(String[] args) {
         Application.launch(Main.class, args);
     }

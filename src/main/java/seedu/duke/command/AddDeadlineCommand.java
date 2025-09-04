@@ -1,21 +1,26 @@
 package seedu.duke.command;
 
+import seedu.duke.exception.DukeException;
+import seedu.duke.storage.Storage;
+import seedu.duke.task.Deadline;
 import seedu.duke.task.Task;
 import seedu.duke.task.TaskList;
 import seedu.duke.ui.Ui;
-import seedu.duke.storage.Storage;
-import seedu.duke.exception.DukeException;
-import seedu.duke.task.Deadline;
 
+/**
+ * Adds a {@link Deadline} task parsed from the user input.
+ * Expects input in the form {@code description /by <time>}.
+ */
 public class AddDeadlineCommand extends Command {
+
     private final String name;
     private final String byRaw;
 
     /**
-     * Creates Deadline Task
+     * Creates a command to add a deadline task.
      *
-     * @param name  Name of Task.
-     * @param byRaw DueDate in String format.
+     * @param name  description of the task
+     * @param byRaw due date/time in a parseable string format
      */
     public AddDeadlineCommand(String name, String byRaw) {
         this.name = name;
@@ -23,12 +28,12 @@ public class AddDeadlineCommand extends Command {
     }
 
     /**
-     * Runs the command to create a deadline task.
+     * Executes the command to create a {@link Deadline}.
      *
-     * @param tasks  List of Tasks.
-     * @param ui Interface for Chatnius questions.
-     * @param storage Where the data is stored.
-     * @throws DukeException  If date and time is in the wrong format
+     * @param tasks   the task list
+     * @param ui      UI for output
+     * @param storage persistent storage
+     * @throws DukeException if the input is invalid or date/time cannot be parsed
      */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws DukeException {
@@ -36,12 +41,11 @@ public class AddDeadlineCommand extends Command {
             throw new DukeException("Invalid deadline format! Use: deadline <task> /by <time>");
         }
         try {
-            Task t = new Deadline(name, byRaw);  // parses via DateTimeUtil
+            Task t = new Deadline(name, byRaw);
             tasks.add(t);
             ui.show(tasks.addedMessage(t));
             storage.save(tasks);
         } catch (IllegalArgumentException e) {
-            // thrown by DateTimeUtil when date/time can't be parsed
             throw new DukeException("Unrecognized date/time for deadline: " + byRaw, e);
         }
     }

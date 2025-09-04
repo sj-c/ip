@@ -1,25 +1,23 @@
 package seedu.duke.command;
 
-import seedu.duke.task.Task;
+import seedu.duke.storage.Storage;
 import seedu.duke.task.TaskList;
 import seedu.duke.ui.Ui;
-import seedu.duke.storage.Storage;
-import seedu.duke.exception.DukeException;
 
-
+/**
+ * Lists all current tasks.
+ */
 public class ListCommand extends Command {
 
     /**
-     * Runs the command to list task.
+     * Executes the list operation.
      *
-     * @param tasks  List of Tasks.
-     * @param ui Interface for Chatnius questions.
-     * @param storage Where the data is stored.
+     * @param tasks   the task list
+     * @param ui      UI for output
+     * @param storage persistent storage (unchanged)
      */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
         ui.show(tasks.renderList());
     }
-
-
 }

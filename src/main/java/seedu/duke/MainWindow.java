@@ -7,39 +7,54 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+
 /**
- * Controller for the main GUI.
+ * Controller for the main GUI window.
  */
 public class MainWindow extends AnchorPane {
+
     @FXML
     private ScrollPane scrollPane;
+
     @FXML
     private VBox dialogContainer;
+
     @FXML
     private TextField userInput;
+
     @FXML
     private Button sendButton;
 
     private Chatnius chat;
 
-    private Image userImage = new Image(this.getClass().getResourceAsStream("/images/BossBaby.png"));
-    private Image dukeImage = new Image(this.getClass().getResourceAsStream("/images/Spongebob.png"));
+    private final Image userImage =
+            new Image(this.getClass().getResourceAsStream("/images/BossBaby.png"));
+    private final Image dukeImage =
+            new Image(this.getClass().getResourceAsStream("/images/Spongebob.png"));
 
+    /**
+     * Initializes JavaFX bindings for the scroll behavior and spacing.
+     * Called automatically by the FXMLLoader.
+     */
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
-        dialogContainer.setSpacing(8);      // reduce vertical gap between messages
+        dialogContainer.setSpacing(8);
         scrollPane.setFitToWidth(true);
     }
 
-    /** Injects the Duke instance */
+    /**
+     * Injects the {@link Chatnius} instance used to process user input.
+     *
+     * @param d Chatnius instance
+     */
     public void setDuke(Chatnius d) {
-        chat = d;
+        this.chat = d;
     }
 
     /**
-     * Creates two dialog boxes, one echoing user input and the other containing Duke's reply and then appends them to
-     * the dialog container. Clears the user input after processing.
+     * Handles the send action: appends the user message and Chatnius reply.
+     * Clears the input field afterwards.
      */
     @FXML
     private void handleUserInput() {

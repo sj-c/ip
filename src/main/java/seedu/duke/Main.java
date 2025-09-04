@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 
 /**
  * JavaFX entry point for the Chatnius application.
- * Loads the {@code MainWindow.fxml} layout and injects a {@link Chatnius} instance.
+ * Loads the main window and injects a {@link Chatnius} instance.
  */
 public class Main extends Application {
 
@@ -20,7 +20,8 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(
+                    Main.class.getResource("/view/MainWindow.fxml"));
             AnchorPane root = fxmlLoader.load();
 
             Scene scene = new Scene(root);
