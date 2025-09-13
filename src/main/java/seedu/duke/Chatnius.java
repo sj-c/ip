@@ -9,9 +9,11 @@ import seedu.duke.ui.Ui;
 
 /**
  * Main logic class for the Chatnius application.
- * <p>Handles initialization of storage, task list, and UI components.
+ * <p>
+ * Handles initialization of storage, task list, and UI components.
  * Provides both a CLI loop (via {@link #run()}) and a method for GUI interaction
- * (via {@link #getResponse(String)}).</p>
+ * (via {@link #getResponse(String)}).
+ * </p>
  */
 public class Chatnius {
 
@@ -23,6 +25,9 @@ public class Chatnius {
 
     /** Handles user interactions and buffered outputs. */
     private final Ui ui;
+
+    /** Default file path used for saving and loading tasks. */
+    private static final String DEFAULT_SAVE_PATH = "data/duke.txt";
 
     /**
      * Creates a new {@code Chatnius} instance.
@@ -42,25 +47,40 @@ public class Chatnius {
         }
         this.tasks = loaded;
         assert this.tasks != null : "TaskList should never be null after initialization";
+    }
 
+    /**
+     * Processes one cycle of user interaction in the CLI.
+     * <p>
+     * Reads a command, parses it, executes it, and reports errors if any.
+     * </p>
+     *
+     * @return {@code true} if the command was an exit command; {@code false} otherwise
+     */
+    private boolean handleOneCommandCycle() {
+        try {
+            String fullCommand = ui.readCommand();
+            Command command = Parser.parse(fullCommand);
+            assert command != null : "Parser.parse() should never return null";
+            command.execute(tasks, ui, storage);
+            return command.isExit();
+        } catch (DukeException e) {
+            ui.showError(e.getMessage());
+            return false; // keep the main path flat
+        }
     }
 
     /**
      * Runs the CLI version of Chatnius.
+     * <p>
      * Continuously reads and executes user commands until an exit command is given.
+     * </p>
      */
     public void run() {
         ui.showWelcome();
         boolean isExit = false;
         while (!isExit) {
-            try {
-                String fullCommand = ui.readCommand();
-                Command command = Parser.parse(fullCommand);
-                command.execute(tasks, ui, storage);
-                isExit = command.isExit();
-            } catch (DukeException e) {
-                ui.showError(e.getMessage());
-            }
+            isExit = handleOneCommandCycle();
         }
         ui.close();
     }
@@ -71,12 +91,12 @@ public class Chatnius {
      * @param args optional argument to specify the storage file path
      */
     public static void main(String[] args) {
-        String filePath = (args.length > 0) ? args[0] : "data/duke.txt";
+        String filePath = (args.length > 0) ? args[0] : DEFAULT_SAVE_PATH;
         new Chatnius(filePath).run();
     }
 
     /**
-     * Handles one command and returns the response as a string (used by the GUI).
+     * Handles one user command and returns the response string (used by the GUI).
      *
      * @param input the raw user input string
      * @return the output string produced by executing the command
