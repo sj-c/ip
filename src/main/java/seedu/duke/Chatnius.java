@@ -41,6 +41,8 @@ public class Chatnius {
             loaded = new TaskList();
         }
         this.tasks = loaded;
+        assert this.tasks != null : "TaskList should never be null after initialization";
+
     }
 
     /**
@@ -82,6 +84,7 @@ public class Chatnius {
     public String getResponse(String input) {
         try {
             Command command = Parser.parse(input);
+            assert command != null : "Parser.parse() should never return null";
             command.execute(tasks, ui, storage);
             return ui.flush();
         } catch (DukeException e) {
