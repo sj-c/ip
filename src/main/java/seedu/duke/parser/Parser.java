@@ -14,15 +14,100 @@ import seedu.duke.exception.DukeException;
 
 /**
  * Parses raw user input into {@link Command} objects.
+ * <p>
+ * Acts as the central command interpreter for Chatnius. Converts
+ * strings entered by the user into concrete command objects for
+ * execution. Throws {@link DukeException} if the input does not
+ * match any known command format.
+ * </p>
  */
 public final class Parser {
 
+    /** String delimiter used to separate task name and deadline. */
+    private static final String BY_DELIM = " /by ";
+
+    /** String delimiter used to separate task name and event start time. */
+    private static final String FROM_DELIM = " /from ";
+
+    /** String delimiter used to separate event start and end times. */
+    private static final String TO_DELIM = " /to ";
+
+    /** Error message shown when the input is empty. */
+    private static final String MSG_EMPTY = "Please enter a command.";
+
+    /** Error message shown when a todo task has no description. */
+    private static final String MSG_TODO_EMPTY = "Todo description cannot be empty!";
+
+    /** Error message shown when a deadline command format is invalid. */
+    private static final String MSG_DEADLINE_FMT =
+            "Invalid deadline format! Use: deadline <task> /by <time>";
+
+    /** Error message shown when an event command format is invalid. */
+    private static final String MSG_EVENT_FMT =
+            "Invalid event format! Use: event <task> /from <start> /to <end>";
+
+    /** Error message template for commands requiring an integer argument. */
+    private static final String MSG_NUM_REQUIRED =
+            "Please provide a valid number after '%s'.";
+
+    /** Error message shown when the command keyword is unrecognized. */
+    private static final String MSG_UNKNOWN = "Unknown command.";
+
+    /**
+     * Private constructor to prevent instantiation.
+     * <p>This class is a utility class and should not be instantiated.</p>
+     */
     private Parser() {
         // utility class
     }
 
     /**
+     * Parses arguments for a deadline command and returns an {@link AddDeadlineCommand}.
+     *
+     * @param args arguments string following the "deadline" keyword
+     * @return an {@link AddDeadlineCommand} representing the parsed input
+     * @throws DukeException if the arguments are missing or in the wrong format
+     */
+    private static Command parseDeadline(String args) throws DukeException {
+        if (args.isEmpty()) throw new DukeException(MSG_DEADLINE_FMT);
+        int pos = args.indexOf(BY_DELIM);
+        if (pos < 0) throw new DukeException(MSG_DEADLINE_FMT);
+
+        String name = args.substring(0, pos).trim();
+        String by = args.substring(pos + BY_DELIM.length()).trim();
+        if (name.isEmpty() || by.isEmpty()) throw new DukeException(MSG_DEADLINE_FMT);
+
+        return new AddDeadlineCommand(name, by);
+    }
+
+    /**
+     * Parses arguments for an event command and returns an {@link AddEventCommand}.
+     *
+     * @param args arguments string following the "event" keyword
+     * @return an {@link AddEventCommand} representing the parsed input
+     * @throws DukeException if the arguments are missing or in the wrong format
+     */
+    private static Command parseEvent(String args) throws DukeException {
+        if (args.isEmpty()) throw new DukeException(MSG_EVENT_FMT);
+        int posFrom = args.indexOf(FROM_DELIM);
+        if (posFrom < 0) throw new DukeException(MSG_EVENT_FMT);
+        int posTo = args.indexOf(TO_DELIM, posFrom + FROM_DELIM.length());
+        if (posTo < 0) throw new DukeException(MSG_EVENT_FMT);
+
+        String name = args.substring(0, posFrom).trim();
+        String from = args.substring(posFrom + FROM_DELIM.length(), posTo).trim();
+        String to = args.substring(posTo + TO_DELIM.length()).trim();
+        if (name.isEmpty() || from.isEmpty() || to.isEmpty()) throw new DukeException(MSG_EVENT_FMT);
+
+        return new AddEventCommand(name, from, to);
+    }
+
+    /**
      * Parses a line of user input into a {@link Command}.
+     * <p>
+     * Identifies the keyword of the command, extracts arguments if present,
+     * and delegates to specific parsers when needed.
+     * </p>
      *
      * @param line raw user input (may be {@code null})
      * @return a concrete {@link Command} to execute
@@ -30,105 +115,39 @@ public final class Parser {
      */
     public static Command parse(String line) throws DukeException {
         String s = (line == null) ? "" : line.trim();
-        if (s.isEmpty()) {
-            throw new DukeException("Please enter a command.");
-        }
+        if (s.isEmpty()) throw new DukeException(MSG_EMPTY);
 
-        // split first word vs the rest (args)
         int sp = s.indexOf(' ');
         String cmd = (sp == -1) ? s : s.substring(0, sp);
         String args = (sp == -1) ? "" : s.substring(sp + 1).trim();
 
         switch (cmd.toLowerCase()) {
-        case "bye":
-            return new ExitCommand();
-
-        case "list":
-            return new ListCommand();
-
+        case "bye":    return new ExitCommand();
+        case "list":   return new ListCommand();
         case "todo":
-            if (args.isEmpty()) {
-                throw new DukeException("Todo description cannot be empty!");
-            }
+            if (args.isEmpty()) throw new DukeException(MSG_TODO_EMPTY);
             return new AddTodoCommand(args);
-
-        case "deadline": {
-            if (args.isEmpty()) {
-                throw new DukeException("Invalid deadline format! Use: deadline <task> /by <time>");
-            }
-            // look for literal " /by "
-            int pos = args.indexOf(" /by ");
-            if (pos < 0) {
-                throw new DukeException("Invalid deadline format! Use: deadline <task> /by <time>");
-            }
-            String name = args.substring(0, pos).trim();
-            String by = args.substring(pos + " /by ".length()).trim();
-            if (name.isEmpty() || by.isEmpty()) {
-                throw new DukeException("Invalid deadline format! Use: deadline <task> /by <time>");
-            }
-            return new AddDeadlineCommand(name, by);
-        }
-
-        case "event": {
-            if (args.isEmpty()) {
-                throw new DukeException("Invalid event format! Use: event <task> /from <start> /to <end>");
-            }
-            // find " /from " then " /to " after it
-            int posFrom = args.indexOf(" /from ");
-            if (posFrom < 0) {
-                throw new DukeException("Invalid event format! Use: event <task> /from <start> /to <end>");
-            }
-            int posTo = args.indexOf(" /to ", posFrom + " /from ".length());
-            if (posTo < 0) {
-                throw new DukeException("Invalid event format! Use: event <task> /from <start> /to <end>");
-            }
-
-            String name = args.substring(0, posFrom).trim();
-            String from = args.substring(posFrom + " /from ".length(), posTo).trim();
-            String to = args.substring(posTo + " /to ".length()).trim();
-
-            if (name.isEmpty() || from.isEmpty() || to.isEmpty()) {
-                throw new DukeException("Invalid event format! Use: event <task> /from <start> /to <end>");
-            }
-            return new AddEventCommand(name, from, to);
-        }
-
-        case "mark":
-            if (args.isEmpty()) {
-                throw new DukeException("Please provide a valid number after 'mark'.");
-            }
-            return new MarkCommand(parseIndex(args, "mark"));
-
-        case "unmark":
-            if (args.isEmpty()) {
-                throw new DukeException("Please provide a valid number after 'unmark'.");
-            }
-            return new UnmarkCommand(parseIndex(args, "unmark"));
-
-        case "delete":
-            if (args.isEmpty()) {
-                throw new DukeException("Please provide a valid number after 'delete'.");
-            }
-            return new DeleteCommand(parseIndex(args, "delete"));
-
-        case "find": {
+        case "deadline": return parseDeadline(args);
+        case "event":    return parseEvent(args);
+        case "mark":     return new MarkCommand(parseIndex(args, "mark"));
+        case "unmark":   return new UnmarkCommand(parseIndex(args, "unmark"));
+        case "delete":   return new DeleteCommand(parseIndex(args, "delete"));
+        case "find":
             String keyword = args.trim();
             if (keyword.isEmpty()) {
                 throw new DukeException("Keyword cannot be empty. Usage: find <keyword>");
             }
             return new FindCommand(keyword);
-        }
-
         default:
-            throw new DukeException("Unknown command.");
+            throw new DukeException(MSG_UNKNOWN);
         }
     }
 
     /**
-     * Parses a single 1-based index argument for commands such as mark/unmark/delete.
+     * Parses a single 1-based index argument for commands such as mark, unmark, or delete.
      *
      * @param arg   raw argument string
-     * @param which name of the command (for error messages)
+     * @param which name of the command (for use in error messages)
      * @return parsed index (1-based)
      * @throws DukeException if {@code arg} is not a valid integer
      */
@@ -136,7 +155,7 @@ public final class Parser {
         try {
             return Integer.parseInt(arg.trim());
         } catch (NumberFormatException e) {
-            throw new DukeException("Please provide a valid number after '" + which + "'.");
+            throw new DukeException(String.format(MSG_NUM_REQUIRED, which));
         }
     }
 }
