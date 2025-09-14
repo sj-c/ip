@@ -173,9 +173,18 @@ public class TaskList {
      * @return matching tasks in their existing order
      */
     public List<Task> findByKeyword(String keyword) {
-        final String needle = keyword.toLowerCase();
+        String q = keyword.trim().toLowerCase();
+        boolean isTagQuery = q.startsWith("#");
+
         return ls.stream()
-                .filter(t -> t.getName().toLowerCase().contains(needle))
+                .filter(t -> {
+                    if (isTagQuery) {
+                        return seedu.duke.util.TagUtil.hasTag(t.getName(), q);
+                    } else {
+                        return t.getName().toLowerCase().contains(q);
+                    }
+                })
                 .collect(Collectors.toList());
     }
+
 }

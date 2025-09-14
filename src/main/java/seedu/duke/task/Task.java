@@ -1,4 +1,6 @@
 package seedu.duke.task;
+import java.util.Set;
+import seedu.duke.util.TagUtil;
 
 /**
  * Base class for all tasks.
@@ -16,6 +18,10 @@ public abstract class Task {
     public Task(String name) {
         this.name = name;
         this.done = false;
+    }
+
+    public Set<String> getTags() {
+        return TagUtil.extractTags(name);
     }
 
     // --- getters/setters ---
@@ -91,6 +97,13 @@ public abstract class Task {
      */
     @Override
     public String toString() {
-        return (done ? "[X] " : "[ ] ") + name;
+        String base = seedu.duke.util.TagUtil.stripTags(name).trim();
+        String tags = String.join(" ", getTags());  // already lowercased in TagUtil
+        String suffix = tags.isEmpty() ? "" : " " + tags;
+        // If base becomes empty (name was only tags), fall back to original name.
+        String display = base.isEmpty() ? name : base + suffix;
+        return (done ? "[X] " : "[ ] ") + display;
     }
+
+
 }
