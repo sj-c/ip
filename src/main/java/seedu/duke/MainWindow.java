@@ -47,7 +47,7 @@ public class MainWindow {
         scrollPane.setFitToWidth(true);
         dialogContainer.setFillWidth(true);
         dialogContainer.setSpacing(8);
-        
+
         userInput.setOnAction(event -> handleUserInput());
     }
 

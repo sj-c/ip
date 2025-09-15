@@ -21,7 +21,7 @@ import seedu.duke.task.ToDo;
 /**
  * Handles persistence of tasks to and from disk.
  */
-public final class Storage {
+public class Storage {
 
     private final Path file;
 
