@@ -5,25 +5,30 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
-/**
- * Controller for the main GUI window.
- */
-public class MainWindow extends AnchorPane {
+public class MainWindow {
 
-    @FXML
-    private ScrollPane scrollPane;
+    @FXML private ScrollPane scrollPane;
+    @FXML private VBox dialogContainer;
+    @FXML private TextField userInput;
+    @FXML private Button sendButton;
 
-    @FXML
-    private VBox dialogContainer;
+    private static final String HELP_MESSAGE = String.join("\n",
+            "👋 Hello! I'm Chatnius.",
+            "",
+            "Here are the commands you can use:",
+            "  todo <task>                 - Add a Todo",
+            "  deadline <task> /by <time>  - Add a Deadline",
+            "  event <task> /from <start> /to <end> - Add an Event",
+            "  list                        - Show all tasks",
+            "  mark <number>               - Mark a task as done",
+            "  unmark <number>             - Unmark a task",
+            "  delete <number>             - Delete a task",
+            "  find <keyword>              - Search tasks",
+            "  bye                         - Exit the chatbot"
+    );
 
-    @FXML
-    private TextField userInput;
-
-    @FXML
-    private Button sendButton;
 
     private Chatnius chat;
 
@@ -32,33 +37,33 @@ public class MainWindow extends AnchorPane {
     private final Image dukeImage =
             new Image(this.getClass().getResourceAsStream("/images/Spongebob.png"));
 
-    /**
-     * Initializes JavaFX bindings for the scroll behavior and spacing.
-     * Called automatically by the FXMLLoader.
-     */
     @FXML
     public void initialize() {
+        // Auto-scroll to bottom when messages grow
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
-        dialogContainer.setSpacing(8);
+        // Make child nodes stretch to the VBox width inside the ScrollPane
+        dialogContainer.prefWidthProperty()
+                .bind(scrollPane.widthProperty().subtract(16)); // subtract scrollbar/padding
         scrollPane.setFitToWidth(true);
+        dialogContainer.setFillWidth(true);
+        dialogContainer.setSpacing(8);
+        
+        userInput.setOnAction(event -> handleUserInput());
     }
 
-    /**
-     * Injects the {@link Chatnius} instance used to process user input.
-     *
-     * @param d Chatnius instance
-     */
+
     public void setDuke(Chatnius d) {
         this.chat = d;
+        dialogContainer.getChildren().add(
+                DialogBox.getDukeDialog(HELP_MESSAGE, dukeImage)
+        );
     }
 
-    /**
-     * Handles the send action: appends the user message and Chatnius reply.
-     * Clears the input field afterwards.
-     */
     @FXML
     private void handleUserInput() {
         String input = userInput.getText();
+        if (input == null || input.isBlank()) return;
+
         String response = chat.getResponse(input);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),

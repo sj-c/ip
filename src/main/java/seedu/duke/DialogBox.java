@@ -45,11 +45,16 @@ public class DialogBox extends HBox {
         // Bubble readability & avatar size
         setSpacing(8);
         dialog.setWrapText(true);
-        dialog.setMaxWidth(420);
+        dialog.maxWidthProperty().bind(this.widthProperty().subtract(100));
 
         displayPicture.setFitWidth(56);
         displayPicture.setFitHeight(56);
         displayPicture.setPreserveRatio(true);
+
+        setFillHeight(true);
+        setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(dialog, javafx.scene.layout.Priority.ALWAYS);
+
     }
 
     /** Positions image on the LEFT and bubble on the RIGHT (Duke). */

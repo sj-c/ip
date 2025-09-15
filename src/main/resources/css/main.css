@@ -3,7 +3,7 @@
 }
 
 .text-field {
-    -fx-background-color: #d0c4df;
+    -fx-background-color: #DDD5F3;
     -fx-font: 20px "Lato";
 }
 
@@ -15,11 +15,6 @@
 .button:hover {
     -fx-background-color:cyan;
     -fx-font-size: 18px;
-}
-
-.button:pressed {
-    -fx-background-color:orange;
-    -fx-font-size: 20px;
 }
 
 .scroll-pane,
