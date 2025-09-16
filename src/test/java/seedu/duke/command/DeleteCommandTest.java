@@ -1,6 +1,8 @@
 package seedu.duke.command;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +14,7 @@ import seedu.duke.ui.FakeUi;
 public class DeleteCommandTest {
 
     @Test
-    public void execute_validIndex_deletesTask_andShowsMessage() throws Exception {
+    public void execute_validIndex_deletesTask() throws Exception {
         TaskList tasks = new TaskList();
         tasks.add(new ToDo("read book"));
         tasks.add(new ToDo("write code"));

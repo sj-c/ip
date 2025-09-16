@@ -17,6 +17,9 @@ import seedu.duke.ui.Ui;
  */
 public class Chatnius {
 
+    /** Default file path used for saving and loading tasks. */
+    private static final String DEFAULT_SAVE_PATH = "data/duke.txt";
+
     /** Manages saving/loading tasks from persistent storage. */
     private final Storage storage;
 
@@ -25,9 +28,6 @@ public class Chatnius {
 
     /** Handles user interactions and buffered outputs. */
     private final Ui ui;
-
-    /** Default file path used for saving and loading tasks. */
-    private static final String DEFAULT_SAVE_PATH = "data/duke.txt";
 
     /**
      * Creates a new {@code Chatnius} instance.

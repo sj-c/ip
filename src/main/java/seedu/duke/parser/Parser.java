@@ -69,13 +69,19 @@ public final class Parser {
      * @throws DukeException if the arguments are missing or in the wrong format
      */
     private static Command parseDeadline(String args) throws DukeException {
-        if (args.isEmpty()) throw new DukeException(MSG_DEADLINE_FMT);
+        if (args.isEmpty()) {
+            throw new DukeException(MSG_DEADLINE_FMT);
+        }
         int pos = args.indexOf(BY_DELIM);
-        if (pos < 0) throw new DukeException(MSG_DEADLINE_FMT);
+        if (pos < 0) {
+            throw new DukeException(MSG_DEADLINE_FMT);
+        }
 
         String name = args.substring(0, pos).trim();
         String by = args.substring(pos + BY_DELIM.length()).trim();
-        if (name.isEmpty() || by.isEmpty()) throw new DukeException(MSG_DEADLINE_FMT);
+        if (name.isEmpty() || by.isEmpty()) {
+            throw new DukeException(MSG_DEADLINE_FMT);
+        }
 
         return new AddDeadlineCommand(name, by);
     }
@@ -88,16 +94,24 @@ public final class Parser {
      * @throws DukeException if the arguments are missing or in the wrong format
      */
     private static Command parseEvent(String args) throws DukeException {
-        if (args.isEmpty()) throw new DukeException(MSG_EVENT_FMT);
+        if (args.isEmpty()) {
+            throw new DukeException(MSG_EVENT_FMT);
+        }
         int posFrom = args.indexOf(FROM_DELIM);
-        if (posFrom < 0) throw new DukeException(MSG_EVENT_FMT);
+        if (posFrom < 0) {
+            throw new DukeException(MSG_EVENT_FMT);
+        }
         int posTo = args.indexOf(TO_DELIM, posFrom + FROM_DELIM.length());
-        if (posTo < 0) throw new DukeException(MSG_EVENT_FMT);
+        if (posTo < 0) {
+            throw new DukeException(MSG_EVENT_FMT);
+        }
 
         String name = args.substring(0, posFrom).trim();
         String from = args.substring(posFrom + FROM_DELIM.length(), posTo).trim();
         String to = args.substring(posTo + TO_DELIM.length()).trim();
-        if (name.isEmpty() || from.isEmpty() || to.isEmpty()) throw new DukeException(MSG_EVENT_FMT);
+        if (name.isEmpty() || from.isEmpty() || to.isEmpty()) {
+            throw new DukeException(MSG_EVENT_FMT);
+        }
 
         return new AddEventCommand(name, from, to);
     }
@@ -115,23 +129,27 @@ public final class Parser {
      */
     public static Command parse(String line) throws DukeException {
         String s = (line == null) ? "" : line.trim();
-        if (s.isEmpty()) throw new DukeException(MSG_EMPTY);
+        if (s.isEmpty()) {
+            throw new DukeException(MSG_EMPTY);
+        }
 
         int sp = s.indexOf(' ');
         String cmd = (sp == -1) ? s : s.substring(0, sp);
         String args = (sp == -1) ? "" : s.substring(sp + 1).trim();
 
         switch (cmd.toLowerCase()) {
-        case "bye":    return new ExitCommand();
-        case "list":   return new ListCommand();
+        case "bye": return new ExitCommand();
+        case "list": return new ListCommand();
         case "todo":
-            if (args.isEmpty()) throw new DukeException(MSG_TODO_EMPTY);
+            if (args.isEmpty()) {
+                throw new DukeException(MSG_TODO_EMPTY);
+            }
             return new AddTodoCommand(args);
         case "deadline": return parseDeadline(args);
-        case "event":    return parseEvent(args);
-        case "mark":     return new MarkCommand(parseIndex(args, "mark"));
-        case "unmark":   return new UnmarkCommand(parseIndex(args, "unmark"));
-        case "delete":   return new DeleteCommand(parseIndex(args, "delete"));
+        case "event": return parseEvent(args);
+        case "mark": return new MarkCommand(parseIndex(args, "mark"));
+        case "unmark": return new UnmarkCommand(parseIndex(args, "unmark"));
+        case "delete": return new DeleteCommand(parseIndex(args, "delete"));
         case "find":
             String keyword = args.trim();
             if (keyword.isEmpty()) {
@@ -146,7 +164,7 @@ public final class Parser {
     /**
      * Parses a single 1-based index argument for commands such as mark, unmark, or delete.
      *
-     * @param arg   raw argument string
+     * @param arg raw argument string
      * @param which name of the command (for use in error messages)
      * @return parsed index (1-based)
      * @throws DukeException if {@code arg} is not a valid integer

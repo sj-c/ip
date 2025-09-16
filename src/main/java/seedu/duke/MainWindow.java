@@ -7,13 +7,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 
+/**
+ * Controller for the main window of Chatnius.
+ * Handles user input, displays dialogs, and shows the help card on launch.
+ */
 public class MainWindow {
 
-    @FXML private ScrollPane scrollPane;
-    @FXML private VBox dialogContainer;
-    @FXML private TextField userInput;
-    @FXML private Button sendButton;
-
+    /** Initial help card shown when the app launches. */
     private static final String HELP_MESSAGE = String.join("\n",
             "👋 Hello! I'm Chatnius.",
             "",
@@ -29,6 +29,10 @@ public class MainWindow {
             "  bye                         - Exit the chatbot"
     );
 
+    @FXML private ScrollPane scrollPane;
+    @FXML private VBox dialogContainer;
+    @FXML private TextField userInput;
+    @FXML private Button sendButton;
 
     private Chatnius chat;
 
@@ -37,6 +41,10 @@ public class MainWindow {
     private final Image dukeImage =
             new Image(this.getClass().getResourceAsStream("/images/Spongebob.png"));
 
+    /**
+     * Initializes the main window after FXML loading.
+     * Sets up auto-scrolling, layout bindings, and input handlers.
+     */
     @FXML
     public void initialize() {
         // Auto-scroll to bottom when messages grow
@@ -51,7 +59,11 @@ public class MainWindow {
         userInput.setOnAction(event -> handleUserInput());
     }
 
-
+    /**
+     * Injects the Chatnius instance and shows the initial help card.
+     *
+     * @param d the Chatnius chatbot
+     */
     public void setDuke(Chatnius d) {
         this.chat = d;
         dialogContainer.getChildren().add(
@@ -59,10 +71,17 @@ public class MainWindow {
         );
     }
 
+    /**
+     * Handles the user pressing Enter or clicking the Send button.
+     * Sends the input to Chatnius, displays both user and chatbot dialogs,
+     * and clears the input field.
+     */
     @FXML
     private void handleUserInput() {
         String input = userInput.getText();
-        if (input == null || input.isBlank()) return;
+        if (input == null || input.isBlank()) {
+            return;
+        }
 
         String response = chat.getResponse(input);
         dialogContainer.getChildren().addAll(

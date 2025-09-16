@@ -23,6 +23,7 @@ public class Main extends Application {
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
             BorderPane root = fxmlLoader.load();
             Scene scene = new Scene(root);
+            stage.setTitle("Chatnius");
             stage.setScene(scene);
             stage.setResizable(true);
             stage.setMinWidth(500);
