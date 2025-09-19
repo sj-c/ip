@@ -22,27 +22,27 @@ public class DialogBox extends HBox {
     private ImageView displayPicture;
 
     /**
-     * Creates a dialog box using the DialogBox.fxml definition.
+     * Creates a dialog box using the {@code DialogBox.fxml} definition.
      *
-     * @param text message shown in the bubble
-     * @param img  avatar image
+     * @param text Message shown in the bubble.
+     * @param img  Avatar image.
      */
     private DialogBox(String text, Image img) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(
-                    MainWindow.class.getResource("/view/DialogBox.fxml"));
+            final FXMLLoader fxmlLoader =
+                    new FXMLLoader(MainWindow.class.getResource("/view/DialogBox.fxml"));
             fxmlLoader.setController(this);
             fxmlLoader.setRoot(this);
             fxmlLoader.load();
         } catch (IOException e) {
-            // In a UI control constructor, printing is acceptable for debugging in this project scope
+            // In a UI control constructor, printing is acceptable for debugging in this project scope.
             e.printStackTrace();
         }
 
         dialog.setText(text);
         displayPicture.setImage(img);
 
-        // Bubble readability & avatar size
+        // Bubble readability & avatar size.
         setSpacing(8);
         dialog.setWrapText(true);
         dialog.maxWidthProperty().bind(this.widthProperty().subtract(100));
@@ -54,7 +54,6 @@ public class DialogBox extends HBox {
         setFillHeight(true);
         setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(dialog, javafx.scene.layout.Priority.ALWAYS);
-
     }
 
     /** Positions image on the LEFT and bubble on the RIGHT (Duke). */
@@ -74,12 +73,12 @@ public class DialogBox extends HBox {
     /**
      * Factory for the user dialog row.
      *
-     * @param text message
-     * @param img  avatar
-     * @return the dialog box configured for a user message
+     * @param text Message.
+     * @param img  Avatar.
+     * @return The dialog box configured for a user message.
      */
     public static DialogBox getUserDialog(String text, Image img) {
-        DialogBox db = new DialogBox(text, img);
+        final DialogBox db = new DialogBox(text, img);
         db.layoutRight();
         return db;
     }
@@ -87,12 +86,12 @@ public class DialogBox extends HBox {
     /**
      * Factory for the Duke dialog row.
      *
-     * @param text message
-     * @param img  avatar
-     * @return the dialog box configured for a Duke message
+     * @param text Message.
+     * @param img  Avatar.
+     * @return The dialog box configured for a Duke message.
      */
     public static DialogBox getDukeDialog(String text, Image img) {
-        DialogBox db = new DialogBox(text, img);
+        final DialogBox db = new DialogBox(text, img);
         db.layoutLeft();
         return db;
     }

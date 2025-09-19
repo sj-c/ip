@@ -20,16 +20,16 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
-            BorderPane root = fxmlLoader.load();
-            Scene scene = new Scene(root);
+            final FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
+            final BorderPane root = fxmlLoader.load();
+            final Scene scene = new Scene(root);
             stage.setTitle("Chatnius");
             stage.setScene(scene);
             stage.setResizable(true);
             stage.setMinWidth(500);
             stage.setMinHeight(400);
 
-            MainWindow controller = fxmlLoader.getController();
+            final MainWindow controller = fxmlLoader.getController();
             controller.setDuke(chat);
 
             stage.show();
@@ -37,5 +37,4 @@ public class Main extends Application {
             e.printStackTrace();
         }
     }
-
 }

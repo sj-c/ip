@@ -8,7 +8,7 @@ public class ToDo extends Task {
     /**
      * Creates a {@code ToDo}.
      *
-     * @param name description of the task
+     * @param name Description of the task.
      */
     public ToDo(String name) {
         super(name);
@@ -17,7 +17,7 @@ public class ToDo extends Task {
     /**
      * Returns the save type code for todos.
      *
-     * @return {@code "T"}
+     * @return {@code "T"}.
      */
     @Override
     protected String typeCode() {
@@ -27,7 +27,7 @@ public class ToDo extends Task {
     /**
      * Returns a user-friendly description of this todo.
      *
-     * @return formatted string
+     * @return Formatted string.
      */
     @Override
     public String toString() {

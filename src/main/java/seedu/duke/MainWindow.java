@@ -47,22 +47,25 @@ public class MainWindow {
      */
     @FXML
     public void initialize() {
-        // Auto-scroll to bottom when messages grow
+        // Auto-scroll to bottom when messages grow.
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
-        // Make child nodes stretch to the VBox width inside the ScrollPane
+        // Make child nodes stretch to the VBox width inside the ScrollPane.
         dialogContainer.prefWidthProperty()
-                .bind(scrollPane.widthProperty().subtract(16)); // subtract scrollbar/padding
+                .bind(scrollPane.widthProperty().subtract(16)); // Subtract scrollbar/padding.
         scrollPane.setFitToWidth(true);
         dialogContainer.setFillWidth(true);
         dialogContainer.setSpacing(8);
 
         userInput.setOnAction(event -> handleUserInput());
+        if (sendButton != null) {
+            sendButton.setOnAction(event -> handleUserInput());
+        }
     }
 
     /**
      * Injects the Chatnius instance and shows the initial help card.
      *
-     * @param d the Chatnius chatbot
+     * @param d The Chatnius chatbot.
      */
     public void setDuke(Chatnius d) {
         this.chat = d;
@@ -78,12 +81,12 @@ public class MainWindow {
      */
     @FXML
     private void handleUserInput() {
-        String input = userInput.getText();
+        final String input = userInput.getText();
         if (input == null || input.isBlank()) {
             return;
         }
 
-        String response = chat.getResponse(input);
+        final String response = chat.getResponse(input);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),
                 DialogBox.getDukeDialog(response, dukeImage)

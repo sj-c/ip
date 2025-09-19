@@ -15,13 +15,18 @@ public abstract class Task {
     /**
      * Creates a {@code Task}.
      *
-     * @param name task description
+     * @param name Task description.
      */
     public Task(String name) {
         this.name = name;
         this.done = false;
     }
 
+    /**
+     * Returns the set of tags parsed from the task name (prefixed with {@code #}).
+     *
+     * @return Set of tags (lowercased, no {@code #}).
+     */
     public Set<String> getTags() {
         return TagUtil.extractTags(name);
     }
@@ -31,7 +36,7 @@ public abstract class Task {
     /**
      * Returns whether the task is completed.
      *
-     * @return true if done; false otherwise
+     * @return {@code true} if done; {@code false} otherwise.
      */
     public boolean isDone() {
         return done;
@@ -40,7 +45,7 @@ public abstract class Task {
     /**
      * Sets the done status.
      *
-     * @param v done state to set
+     * @param v Done state to set.
      */
     public void setDone(boolean v) {
         this.done = v;
@@ -49,7 +54,7 @@ public abstract class Task {
     /**
      * Returns the task name/description.
      *
-     * @return name
+     * @return Name.
      */
     public String getName() {
         return name;
@@ -58,16 +63,16 @@ public abstract class Task {
     // --- stable save format ---
 
     /**
-     * Type discriminator used in save files ("T" / "D" / "E").
+     * Type discriminator used in save files ({@code "T"} / {@code "D"} / {@code "E"}).
      *
-     * @return the type code
+     * @return The type code.
      */
     protected abstract String typeCode();
 
     /**
      * Extra fields appended to the save line after the name.
      *
-     * @return array of extra fields (may be empty)
+     * @return Array of extra fields (may be empty).
      */
     protected String[] extraFieldsForSave() {
         return new String[0];
@@ -76,18 +81,18 @@ public abstract class Task {
     /**
      * Returns a stable single-line representation suitable for persistence.
      *
-     * @return save line
+     * @return Save line.
      */
     public String toSaveString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append(typeCode())
-                .append("|")
+                .append('|')
                 .append(done ? 1 : 0)
-                .append("|")
+                .append('|')
                 .append(name);
 
         for (String f : extraFieldsForSave()) {
-            sb.append("|").append(f);
+            sb.append('|').append(f);
         }
         return sb.toString();
     }
@@ -95,15 +100,15 @@ public abstract class Task {
     /**
      * Returns a user-friendly representation for display.
      *
-     * @return formatted string
+     * @return Formatted string.
      */
     @Override
     public String toString() {
-        String base = TagUtil.stripTags(name).trim();
-        String tags = String.join(" ", getTags()); // already lowercased in TagUtil
-        String suffix = tags.isEmpty() ? "" : " " + tags;
+        final String base = TagUtil.stripTags(name).trim();
+        final String tags = String.join(" ", getTags()); // already lowercased in TagUtil
+        final String suffix = tags.isEmpty() ? "" : " " + tags;
         // If base becomes empty (name was only tags), fall back to original name.
-        String display = base.isEmpty() ? name : base + suffix;
+        final String display = base.isEmpty() ? name : base + suffix;
         return (done ? "[X] " : "[ ] ") + display;
     }
 }

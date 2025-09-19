@@ -30,30 +30,30 @@ public final class DateTimeUtil {
     };
 
     private DateTimeUtil() {
-        // utility class; do not instantiate
+        // Utility class; do not instantiate.
     }
 
     /**
      * Parses a date/time string in a few flexible formats.
      * <ul>
-     *   <li>Tries date-time patterns first (e.g. {@code yyyy-MM-dd HHmm} or {@code d/M/yyyy HHmm}).</li>
+     *   <li>Tries date-time patterns first (e.g., {@code yyyy-MM-dd HHmm} or {@code d/M/yyyy HHmm}).</li>
      *   <li>Then tries date-only patterns (time defaulted to 00:00).</li>
      *   <li>Finally accepts ISO-8601 for reading from storage.</li>
      * </ul>
      *
-     * @param s input string
-     * @return parsed {@link LocalDateTime}
-     * @throws IllegalArgumentException if none of the formats match
+     * @param s Input string.
+     * @return Parsed {@link LocalDateTime}.
+     * @throws IllegalArgumentException If none of the formats match.
      */
     public static LocalDateTime parseFlexibleDateOrDateTime(String s) {
-        String t = s.trim();
+        final String t = s.trim();
 
         // Try full date-time first.
         for (DateTimeFormatter f : DATETIME_PATTERNS) {
             try {
                 return LocalDateTime.parse(t, f);
             } catch (DateTimeParseException ignored) {
-                // try next pattern
+                // Try next pattern.
             }
         }
 
@@ -62,7 +62,7 @@ public final class DateTimeUtil {
             try {
                 return LocalDate.parse(t, f).atStartOfDay();
             } catch (DateTimeParseException ignored) {
-                // try next pattern
+                // Try next pattern.
             }
         }
 
@@ -70,7 +70,7 @@ public final class DateTimeUtil {
         try {
             return LocalDateTime.parse(t, ISO);
         } catch (DateTimeParseException ignored) {
-            // fall through to error below
+            // Fall through to error below.
         }
 
         throw new IllegalArgumentException("Unrecognized date/time: " + s);
@@ -80,8 +80,8 @@ public final class DateTimeUtil {
      * Formats a date/time for user display.
      * If the time is exactly midnight, show only the date; otherwise show date and time.
      *
-     * @param dt date/time
-     * @return formatted string
+     * @param dt Date/time.
+     * @return Formatted string.
      */
     public static String formatFriendly(LocalDateTime dt) {
         if (dt.toLocalTime().equals(LocalTime.MIDNIGHT)) {

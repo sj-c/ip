@@ -12,15 +12,20 @@ public class ExitCommand extends Command {
     /**
      * Shows the goodbye message.
      *
-     * @param tasks   the task list (unused)
-     * @param ui      UI for output
-     * @param storage persistent storage (unused)
+     * @param tasks   The task list (unused).
+     * @param ui      UI for output.
+     * @param storage Persistent storage (unused).
      */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
         ui.showGoodbye();
     }
 
+    /**
+     * Returns {@code true} to indicate the application should terminate.
+     *
+     * @return {@code true}.
+     */
     @Override
     public boolean isExit() {
         return true;

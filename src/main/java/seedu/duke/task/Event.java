@@ -15,10 +15,10 @@ public class Event extends Task {
     /**
      * Creates an {@code Event}.
      *
-     * @param description description of the event
-     * @param fromRaw     start time in a parseable string
-     * @param toRaw       end time in a parseable string
-     * @throws IllegalArgumentException if date/time parsing fails
+     * @param description Description of the event.
+     * @param fromRaw     Start time in a parseable string.
+     * @param toRaw       End time in a parseable string.
+     * @throws IllegalArgumentException If date/time parsing fails.
      */
     public Event(String description, String fromRaw, String toRaw) {
         super(description);
@@ -29,7 +29,7 @@ public class Event extends Task {
     /**
      * Returns the save type code for events.
      *
-     * @return {@code "E"}
+     * @return {@code "E"}.
      */
     @Override
     protected String typeCode() {
@@ -47,7 +47,7 @@ public class Event extends Task {
     /**
      * Returns a user-friendly description of this event.
      *
-     * @return formatted string
+     * @return Formatted string.
      */
     @Override
     public String toString() {

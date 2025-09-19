@@ -28,7 +28,7 @@ public class Storage {
     /**
      * Creates a {@code Storage} pointing to a file path.
      *
-     * @param filePath path to the tasks file
+     * @param filePath Path to the tasks file.
      */
     public Storage(String filePath) {
         this.file = Paths.get(filePath);
@@ -37,107 +37,124 @@ public class Storage {
     /**
      * Loads tasks from disk. Creates parent directory/file if missing.
      *
-     * @return list of tasks loaded from the file
-     * @throws DukeException if an I/O error occurs
+     * @return List of tasks loaded from the file.
+     * @throws DukeException If an I/O error occurs.
      */
     public List<Task> load() throws DukeException {
         try {
-            Path parent = file.getParent();
-            if (parent != null && Files.notExists(parent)) {
-                Files.createDirectories(parent);
-            }
+            ensureStorageReady();
             if (Files.notExists(file)) {
                 Files.createFile(file);
                 return new ArrayList<>();
             }
-
-            List<String> lines = Files.readAllLines(file, StandardCharsets.UTF_8);
-            List<Task> tasks = new ArrayList<>();
-            for (String raw : lines) {
-                String line = raw.trim();
-                if (line.isEmpty()) {
-                    continue;
-                }
-                try {
-                    tasks.add(parseLine(line));
-                } catch (IllegalArgumentException ex) {
-                    // Not fatal: skip corrupted lines but do not keep the catch block empty.
-                    System.err.println("Skipping malformed line in " + file + ": " + line);
-                }
-            }
-            return tasks;
+            final List<String> lines = Files.readAllLines(file, StandardCharsets.UTF_8);
+            return parseTasks(lines);
         } catch (IOException e) {
-            throw new DukeException("Failed to load tasks from " + file, e);
+            throw new DukeException("Failed to load tasks from " + file + ".", e);
         }
     }
 
     /**
      * Saves the entire task list atomically to disk.
      *
-     * @param tasks in-memory task list
-     * @throws DukeException if any I/O error occurs
+     * @param tasks In-memory task list.
+     * @throws DukeException If any I/O error occurs.
      */
     public void save(TaskList tasks) throws DukeException {
-        Path tmp = file.resolveSibling(file.getFileName().toString() + ".tmp");
+        final Path tmp = tempPath();
+        try {
+            writeTempFile(tmp, tasks);
+            replaceWithTemp(tmp);
+        } catch (IOException e) {
+            throw new DukeException("Failed to persist tasks to " + file + ".", e);
+        }
+    }
+
+    // ===== helpers (single-purpose, private) =====
+
+    private void ensureStorageReady() throws IOException {
+        final Path parent = file.getParent();
+        if (parent != null && Files.notExists(parent)) {
+            Files.createDirectories(parent);
+        }
+    }
+
+    private List<Task> parseTasks(List<String> lines) {
+        final List<Task> tasks = new ArrayList<>();
+        for (String raw : lines) {
+            final String line = raw.trim();
+            if (line.isEmpty()) {
+                continue;
+            }
+            try {
+                tasks.add(parseLine(line));
+            } catch (IllegalArgumentException ex) {
+                // Not fatal: skip corrupted lines but do not keep the catch block empty.
+                System.err.println("Skipping malformed line in " + file + ": " + line);
+            }
+        }
+        return tasks;
+    }
+
+    private Path tempPath() {
+        return file.resolveSibling(file.getFileName().toString() + ".tmp");
+    }
+
+    private void writeTempFile(Path tmp, TaskList tasks) throws IOException {
         try (BufferedWriter w = Files.newBufferedWriter(
                 tmp, StandardCharsets.UTF_8,
                 StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
-
             for (int i = 0; i < tasks.size(); i++) {
                 w.write(tasks.get(i).toSaveString());
                 w.newLine();
             }
-        } catch (IOException e) {
-            throw new DukeException("Failed to write temp file for " + file, e);
         }
+    }
 
-        try {
-            Files.move(tmp, file, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new DukeException("Failed to replace " + file + " with temp file", e);
-        }
+    private void replaceWithTemp(Path tmp) throws IOException {
+        Files.move(tmp, file, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
     }
 
     /**
      * Parses one serialized task line.
      * <p>Format: {@code TYPE|done|name|extras...}</p>
      *
-     * @param line serialized line
-     * @return the parsed {@link Task}
-     * @throws IllegalArgumentException if the line is malformed
+     * @param line Serialized line.
+     * @return The parsed {@link Task}.
+     * @throws IllegalArgumentException If the line is malformed.
      */
     private Task parseLine(String line) {
-        String[] parts = line.split("\\|", -1);
+        final String[] parts = line.split("\\|", -1);
         if (parts.length < 3) {
             throw new IllegalArgumentException("Bad format: " + line);
         }
 
-        String type = parts[0].trim();
-        boolean done = "1".equals(parts[1].trim());
-        String name = parts[2].trim();
+        final String type = parts[0].trim();
+        final boolean done = "1".equals(parts[1].trim());
+        final String name = parts[2].trim();
 
-        Task t;
+        final Task task;
         switch (type) {
         case "T":
-            t = new ToDo(name);
+            task = new ToDo(name);
             break;
         case "D":
             if (parts.length < 4) {
-                throw new IllegalArgumentException("Deadline missing /by");
+                throw new IllegalArgumentException("Deadline missing /by.");
             }
-            t = new Deadline(name, parts[3].trim());
+            task = new Deadline(name, parts[3].trim());
             break;
         case "E":
             if (parts.length < 5) {
-                throw new IllegalArgumentException("Event missing /from or /to");
+                throw new IllegalArgumentException("Event missing /from or /to.");
             }
-            t = new Event(name, parts[3].trim(), parts[4].trim());
+            task = new Event(name, parts[3].trim(), parts[4].trim());
             break;
         default:
             throw new IllegalArgumentException("Unknown type: " + type);
         }
 
-        t.setDone(done);
-        return t;
+        task.setDone(done);
+        return task;
     }
 }

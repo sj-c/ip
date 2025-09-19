@@ -12,9 +12,9 @@ public class ListCommand extends Command {
     /**
      * Executes the list operation.
      *
-     * @param tasks   the task list
-     * @param ui      UI for output
-     * @param storage persistent storage (unchanged)
+     * @param tasks   The task list.
+     * @param ui      UI for output.
+     * @param storage Persistent storage (unchanged).
      */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {

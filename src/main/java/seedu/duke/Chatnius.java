@@ -32,7 +32,7 @@ public class Chatnius {
     /**
      * Creates a new {@code Chatnius} instance.
      *
-     * @param filePath the file path to load and save task data
+     * @param filePath The file path to load and save task data.
      */
     public Chatnius(String filePath) {
         this.ui = new Ui();
@@ -55,18 +55,18 @@ public class Chatnius {
      * Reads a command, parses it, executes it, and reports errors if any.
      * </p>
      *
-     * @return {@code true} if the command was an exit command; {@code false} otherwise
+     * @return {@code true} if the command was an exit command; {@code false} otherwise.
      */
     private boolean handleOneCommandCycle() {
         try {
-            String fullCommand = ui.readCommand();
-            Command command = Parser.parse(fullCommand);
+            final String fullCommand = ui.readCommand();
+            final Command command = Parser.parse(fullCommand);
             assert command != null : "Parser.parse() should never return null";
             command.execute(tasks, ui, storage);
             return command.isExit();
         } catch (DukeException e) {
             ui.showError(e.getMessage());
-            return false; // keep the main path flat
+            return false; // Keep the main path flat.
         }
     }
 
@@ -88,22 +88,22 @@ public class Chatnius {
     /**
      * Entry point for the CLI program.
      *
-     * @param args optional argument to specify the storage file path
+     * @param args Optional argument to specify the storage file path.
      */
     public static void main(String[] args) {
-        String filePath = (args.length > 0) ? args[0] : DEFAULT_SAVE_PATH;
+        final String filePath = (args.length > 0) ? args[0] : DEFAULT_SAVE_PATH;
         new Chatnius(filePath).run();
     }
 
     /**
      * Handles one user command and returns the response string (used by the GUI).
      *
-     * @param input the raw user input string
-     * @return the output string produced by executing the command
+     * @param input The raw user input string.
+     * @return The output string produced by executing the command.
      */
     public String getResponse(String input) {
         try {
-            Command command = Parser.parse(input);
+            final Command command = Parser.parse(input);
             assert command != null : "Parser.parse() should never return null";
             command.execute(tasks, ui, storage);
             return ui.flush();

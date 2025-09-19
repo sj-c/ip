@@ -10,28 +10,31 @@ import seedu.duke.ui.Ui;
  */
 public class DeleteCommand extends Command {
 
-    private final int idx;
+    private final int index;
 
     /**
      * Creates a command to delete a task.
      *
-     * @param idx 1-based index of the task to delete
+     * @param index 1-based index of the task to delete.
      */
-    public DeleteCommand(int idx) {
-        this.idx = idx;
+    public DeleteCommand(int index) {
+        this.index = index;
     }
 
     /**
      * Executes the delete operation.
      *
-     * @param tasks   the task list
-     * @param ui      UI for output
-     * @param storage persistent storage
-     * @throws DukeException if the index is invalid
+     * @param tasks   The task list.
+     * @param ui      UI for output.
+     * @param storage Persistent storage.
+     * @throws DukeException If the index is invalid.
      */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws DukeException {
-        ui.show(tasks.deleteMessage(idx));
+        if (index <= 0 || index > tasks.size()) {
+            throw new DukeException("Invalid index for delete.");
+        }
+        ui.show(tasks.deleteMessage(index));
         storage.save(tasks);
     }
 }

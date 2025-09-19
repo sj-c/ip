@@ -8,7 +8,7 @@ public class DukeException extends Exception {
     /**
      * Creates an exception with a message.
      *
-     * @param message detail message
+     * @param message Detail message.
      */
     public DukeException(String message) {
         super(message);
@@ -17,8 +17,8 @@ public class DukeException extends Exception {
     /**
      * Creates an exception with a message and cause.
      *
-     * @param message detail message
-     * @param cause   underlying cause
+     * @param message Detail message.
+     * @param cause   Underlying cause.
      */
     public DukeException(String message, Throwable cause) {
         super(message, cause);
@@ -27,7 +27,7 @@ public class DukeException extends Exception {
     /**
      * Creates an exception with only a cause.
      *
-     * @param cause underlying cause
+     * @param cause Underlying cause.
      */
     public DukeException(Throwable cause) {
         super(cause);

@@ -11,34 +11,29 @@ import seedu.duke.ui.Ui;
  */
 public class MarkCommand extends Command {
 
-    private final int idx; // 1-based
+    private final int index; // 1-based
 
     /**
      * Creates a command to mark a task as done.
      *
-     * @param idx 1-based index of the task to mark
+     * @param index 1-based index of the task to mark.
      */
-    public MarkCommand(int idx) {
-        this.idx = idx;
+    public MarkCommand(int index) {
+        this.index = index;
     }
 
     /**
      * Executes the mark operation.
      *
-     * @param tasks   the task list
-     * @param ui      UI for output
-     * @param storage persistent storage
-     * @throws DukeException if the index is invalid
+     * @param tasks   The task list.
+     * @param ui      UI for output.
+     * @param storage Persistent storage.
+     * @throws DukeException If the index is invalid.
      */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws DukeException {
-        Task t = tasks.mark(idx);
-        ui.show(
-                "____________________________________________________________\n"
-                        + " Nice! I've marked this task as done:\n"
-                        + " " + t + "\n"
-                        + "____________________________________________________________\n"
-        );
+        final Task task = tasks.mark(index);
+        ui.show("Marked as done:\n" + task);
         storage.save(tasks);
     }
 }

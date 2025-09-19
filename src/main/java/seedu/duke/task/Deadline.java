@@ -14,9 +14,9 @@ public class Deadline extends Task {
     /**
      * Creates a {@code Deadline}.
      *
-     * @param description description of the deadline
-     * @param byRaw       due date/time in a parseable string
-     * @throws IllegalArgumentException if date/time parsing fails
+     * @param description Description of the deadline.
+     * @param byRaw       Due date/time in a parseable string.
+     * @throws IllegalArgumentException If date/time parsing fails.
      */
     public Deadline(String description, String byRaw) {
         super(description);
@@ -26,7 +26,7 @@ public class Deadline extends Task {
     /**
      * Returns the save type code for deadlines.
      *
-     * @return {@code "D"}
+     * @return {@code "D"}.
      */
     @Override
     protected String typeCode() {
@@ -42,7 +42,7 @@ public class Deadline extends Task {
     /**
      * Returns a user-friendly description of this deadline.
      *
-     * @return formatted string
+     * @return Formatted string.
      */
     @Override
     public String toString() {

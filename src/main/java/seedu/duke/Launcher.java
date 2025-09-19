@@ -9,13 +9,13 @@ import javafx.application.Application;
 public final class Launcher {
 
     private Launcher() {
-        // utility class
+        // Utility class.
     }
 
     /**
      * Entry point that delegates to {@link Main}.
      *
-     * @param args program arguments
+     * @param args Program arguments.
      */
     public static void main(String[] args) {
         Application.launch(Main.class, args);

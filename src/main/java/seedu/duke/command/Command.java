@@ -13,17 +13,17 @@ public abstract class Command {
     /**
      * Executes this command.
      *
-     * @param tasks   the task list
-     * @param ui      UI for output
-     * @param storage persistent storage
-     * @throws DukeException on command-specific failures
+     * @param tasks   The task list.
+     * @param ui      UI for output.
+     * @param storage Persistent storage.
+     * @throws DukeException On command-specific failures.
      */
     public abstract void execute(TaskList tasks, Ui ui, Storage storage) throws DukeException;
 
     /**
-     * Whether this command should terminate the application.
+     * Returns whether this command should terminate the application.
      *
-     * @return true to request exit; false otherwise
+     * @return {@code true} to request exit; {@code false} otherwise.
      */
     public boolean isExit() {
         return false;

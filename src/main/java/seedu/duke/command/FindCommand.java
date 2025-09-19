@@ -18,39 +18,37 @@ public final class FindCommand extends Command {
     /**
      * Creates a {@code FindCommand}.
      *
-     * @param keyword non-empty search keyword
+     * @param keyword Non-empty search keyword.
      */
     public FindCommand(String keyword) {
         this.keyword = keyword.trim();
     }
 
+    /**
+     * Executes the find operation.
+     *
+     * @param tasks   The task list.
+     * @param ui      UI for output.
+     * @param storage Persistent storage (unchanged).
+     * @throws DukeException If the keyword is empty.
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws DukeException {
         if (keyword.isEmpty()) {
-            throw new DukeException("Keyword cannot be empty. Usage: find <keyword>");
+            throw new DukeException("Keyword cannot be empty. Usage: find <keyword>.");
         }
 
-        List<Task> matches = tasks.findByKeyword(keyword);
-
-        StringBuilder sb = new StringBuilder();
+        final List<Task> matches = tasks.findByKeyword(keyword);
         if (matches.isEmpty()) {
-            sb.append("     No matching tasks found.\n");
-        } else {
-            sb.append("     Here are the matching tasks in your list:\n");
-            for (int i = 0; i < matches.size(); i++) {
-                sb.append("     ")
-                        .append(i + 1)
-                        .append(".")
-                        .append(matches.get(i))
-                        .append("\n");
-            }
+            ui.show("No matching tasks found.");
+            return;
         }
 
+        final StringBuilder sb = new StringBuilder();
+        sb.append("Here are the matching tasks in your list:\n");
+        for (int i = 0; i < matches.size(); i++) {
+            sb.append(i + 1).append(". ").append(matches.get(i)).append('\n');
+        }
         ui.show(sb.toString());
-    }
-
-    @Override
-    public boolean isExit() {
-        return false;
     }
 }

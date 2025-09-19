@@ -11,34 +11,29 @@ import seedu.duke.ui.Ui;
  */
 public class UnmarkCommand extends Command {
 
-    private final int idx;
+    private final int index; // 1-based
 
     /**
      * Creates a command to unmark a task.
      *
-     * @param idx 1-based index of the task to unmark
+     * @param index 1-based index of the task to unmark.
      */
-    public UnmarkCommand(int idx) {
-        this.idx = idx;
+    public UnmarkCommand(int index) {
+        this.index = index;
     }
 
     /**
      * Executes the unmark operation.
      *
-     * @param tasks   the task list
-     * @param ui      UI for output
-     * @param storage persistent storage
-     * @throws DukeException if the index is invalid
+     * @param tasks   The task list.
+     * @param ui      UI for output.
+     * @param storage Persistent storage.
+     * @throws DukeException If the index is invalid.
      */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws DukeException {
-        Task t = tasks.unmark(idx);
-        ui.show(
-                "____________________________________________________________\n"
-                        + " OK, I've marked this task as not done yet:\n"
-                        + " " + t + "\n"
-                        + "____________________________________________________________\n"
-        );
+        final Task task = tasks.unmark(index);
+        ui.show("Marked as not done:\n" + task);
         storage.save(tasks);
     }
 }
